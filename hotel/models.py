@@ -29,8 +29,8 @@ class Hotel_Domain(models.Model):
 #Save info about hotel
 class Hotel(models.Model):
     
-    user_request = models.ForeignKey(Users_Request)
-    hotel_domain = models.ForeignKey(Hotel_Domain)
+    user_request = models.ForeignKey(Users_Request, null=True, blank=True)
+    hotel_domain = models.ForeignKey(Hotel_Domain, null=True, blank=True)
     order_in_page = models.SmallIntegerField(null=True, blank=True)
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=200)
