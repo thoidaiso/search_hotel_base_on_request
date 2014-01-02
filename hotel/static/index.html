@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hotel Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="bootstrap-3.0.3/dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="css/index.css" rel="stylesheet">
+	 <link href="css/custom_selection.css" rel="stylesheet">
+	 
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap-3.0.3/dist/js/bootstrap.min.js"></script>
+	
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <!-- Search area -->
+    <div id="search_area" class="search_area">
+		<div class="blank">
+
+		</div>
+		<div class="vert-text">
+			<h1>Search hotels</h1>
+			<h3><em>We</em> Find The Perfect Hotels, <em>You</em> Choose The Best</h3>
+		</div>
+		<div class="search_form">
+			<form >
+				<div class="col-lg-6">
+					<div class="input-group input-group-lg">
+					  <input type="text" id="search_name" name="search_name" class="form-control">
+					  <span class="input-group-btn">
+						<button type="button" class="btn btn-default btn-lg">
+						  <span class="glyphicon glyphicon-search"/>
+						</button>
+					  </span>
+					</div><!-- /input-group -->
+				</div><!-- /.col-lg-6 -->
+				</br>
+				<div class="search_line">
+					<!-- Line check-in check-out, rooms, guests -->
+					<div class="search_input_element">
+						<label for="check_in">Check-in</label>
+						<input type="date" name="check_in" id="check_in" class="form-control unstyled">
+					</div>
+					<div class="search_input_element">
+						<label for="check_in">Check-out</label>
+						<input type="date" name="check_out" id="check_out" class="form-control unstyled">
+					</div>
+					<div class="select_input_element">
+						<label for="room">Rooms</label>
+						<div class="dropdown subject">
+							<span class="selected">1</span>
+							<input type="hidden" name="room" id="room" value="1" />
+							<ul>
+								<li id="select1" class="selected">1</li>
+								<li id="select2">2</li>
+								<li id="select3">3</li>
+								<li id="select4">4</li>
+							</ul>
+						</div>					
+					</div>
+					<div class="select_input_element">
+						<label for="room">Guests</label>
+						<div class="dropdown subject">
+							<span class="selected">1</span>
+							<input type="hidden" name="guest" id="guest" value="1" />
+							<ul>
+								<li id="select1" class="selected">1</li>
+								<li id="select2">2</li>
+								<li id="select3">3</li>
+								<li id="select4">4</li>
+							</ul>
+						</div>	
+					</div>
+				</div>
+			</form>
+		</div>
+       
+        <!-- <a href="#about" class="btn btn-default btn-lg">Find Out More</a> -->
+    </div>
+	<footer>
+	  <div class="container">
+		<div class="row">
+		  <div class="col-md-6 col-md-offset-3 text-center">
+			<ul class="list-inline">
+			  <li><i class="fa fa-facebook fa-3x"></i></li>
+			  <li><i class="fa fa-twitter fa-3x"></i></li>
+			  <li><i class="fa fa-dribbble fa-3x"></i></li>
+			</ul>
+			<div class="top-scroll">
+			  <a href="#top"><i class="fa fa-circle-arrow-up scroll fa-4x"></i></a>
+			</div>
+			<hr>
+			<p>Copyright &copy; Company 2013</p>
+		  </div>
+		</div>
+	  </div>
+	</footer>
+	
+	<script src="js/selection_custom.js"></script>
+  </body>
+</html>

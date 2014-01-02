@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from polls import views
+from hotel import views
 
 urlpatterns = patterns('', 
 #                   ex: /polls/
@@ -17,4 +17,9 @@ urlpatterns = patterns('',
 #                url(r'^(?P<poll_id>\d+)/vote/$', views.vote, name='vote'),
 
 #                url(r'^$', views.IndexView.as_view(), name='index'),
+
+#                url(r'^$', views.IndexView.as_view(), name='index'), 
+#                url(r'^search/', views.ResultView.as_view(), name='result'),
+#                url(r'^get_result/$', views.get_result, name='get_result'),
+#                url(r'^(?P<poll_id>\d+)/vote/$', views.vote, name='vote'),
                        )
