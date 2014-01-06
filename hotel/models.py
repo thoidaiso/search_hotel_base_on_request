@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 
 # Create your models here.
 
@@ -18,7 +19,16 @@ class Users_Request(models.Model):
     star_rating = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
     create_time = models.DateTimeField(null=True, blank=True)
     currency = models.CharField(max_length=4, null=True, blank=True)
+    
+    date_start = models.DateTimeField(null=True, blank=True)
+    date_end = models.DateTimeField(null=True, blank=True)
+    room_count = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
+    guess_count = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
 
+class Users_Request_Form(ModelForm):
+    class Meta:
+        model = Users_Request
+        
 #Save domain to search hotel and their priority compare with other domain
 class Hotel_Domain(models.Model):
     name = models.CharField(max_length=100)

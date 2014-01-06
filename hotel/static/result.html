@@ -3,6 +3,22 @@
   <head>
     <title>Hotel Scraper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Jquery UI -->
+    <link rel="stylesheet" href="{% static 'jquery-ui-1.10.3/themes/base/jquery.ui.all.css' %}">
+	<script src="{% static 'jquery-ui-1.10.3/jquery-1.9.1.js' %}"></script>
+	<script src="{% static 'jquery-ui-1.10.3/ui/jquery.ui.core.js' %}"></script>
+	<script src="{% static 'jquery-ui-1.10.3/ui/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'jquery-ui-1.10.3/ui/jquery.ui.datepicker.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'jquery-ui-1.10.3/demos/demos.css' %}">
+	<script>
+	jQuery(function($){
+		$( ".datepicker" ).datepicker({
+			dateFormat: "dd-mm-yy"
+		});
+	});
+	</script>
+	
     <!-- Bootstrap -->
     <link href="bootstrap-3.0.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/custom_selection.css" rel="stylesheet">
@@ -42,11 +58,11 @@
 				</div>
 				<div class="search_input_element">
 					<label for="check_in">Check-in</label>
-					<input type="date" name="check_in" id="check_in" class="form-control unstyled">
+					<input type="text" name="check_in" id="check_in" class="datepicker form-control unstyled">
 				</div>
 				<div class="search_input_element">
 					<label for="check_out">Check-out</label>
-					<input type="date" name="check_out" id="check_out" class="form-control unstyled">
+					<input type="text" name="check_out" id="check_out" class="datepicker form-control unstyled">
 				</div>
 				<div class="search_input_element">
 					<label for="room">Rooms</label>

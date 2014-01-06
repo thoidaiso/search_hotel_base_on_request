@@ -1,0 +1,72 @@
+
+<div id="result_column">
+	
+	<div id="result_view_count">
+		<!-- Line info about result -->
+		<div id="result_sort_wrapper">
+			<div class="result_sort dropdown">
+				<span class="selected">Most Popular</span>
+				<input type="hidden" name="sort_control" id="sort_control" value="most_popular" />
+				<ul>
+					<li id="most_popular" class="selected">Most Popular</li>
+					<li id="hotel_name_asc">Hotel name (A-Z)</li>
+					<li id="hotel_name_desc">Hotel name (Z-A)</li>	
+					<li id="price_asc">Price (lowest first)</li>
+					<li id="price_desc">Price (highest first)</li>
+					<li id="stars_asc">Star rating (lowest first)</li>
+					<li id="stars_desc">Star rating (highest first)</li>
+				</ul>
+			</div>
+			
+		</div>
+		<div id="result_count">
+			<span class="hotel_display_count">25 hotels</span>
+			<span class="hotel_display_location">in Ho Chi Minh city</span>
+		</div>
+	</div>
+	<!-- Grid hotel details -->
+	<div id="hotel_detail">
+		<div id="hotel_container">
+			<!--Hotel detail item -->
+			{% for hotel in data %}
+			<div class="col-lg-3 col-md-4 col-xs-6 hotel_detail_item">
+			    <div id="hotel_content_front">
+					<div id="hotel_detail_photo_wrapper">
+						<div id="hotel_detail_photo">
+							<a class="thumbnail" href="#"><img class="img-responsive" src="http://cdn-a.roomkey.com/vfml/1258/794/53628837/200x150.jpg"></a>
+						</div>
+					</div>
+					<div class="hotel_detail_name_star_location">
+						<div id="hotel_detail_name">
+							<a href="#">{{hotel.name}} </a>
+						</div>
+						<div class="hotel_star hotel_4star">
+						</div>
+						<div class="hotel_detail_location_wrapper">
+							<span class="hotel_detail_location">{{hotel.location}}</span>
+						</div>
+					</div>
+					<div class="hotel_price_rating">
+						<div class="hotel_price_wrapper">
+							<span class="hotel_detail_price">{{hotel.price}}</span>
+							<span class="hotel_detail_currency">{{hotel.currency}}</span>
+						</div>
+						<div class="hotel_detail_rating_wrapper">
+							<span class="hotel_detail_rating_with">with</span>
+							<div class="hotel_detail_rating">
+								<span class="hotel_detail_rating">{{hotel.rating}}</span>
+								<div class="rating_symbol"></div>	
+							</div>
+						</div>
+					</div>
+
+			    </div>
+			</div>
+			{% endfor %}
+			
+		</div>
+	</div>
+</div>
+			
+
+		

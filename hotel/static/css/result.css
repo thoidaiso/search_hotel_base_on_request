@@ -52,7 +52,7 @@ position: static;
 	float: left;
 }
 .input_text{
-	width:500px;
+	
 	margin-left: 24px;
 }
 .select_input_element{
@@ -343,4 +343,11 @@ background-color: #fff;
 }
 .row{
 	margin-top:30px
+}
+.datepicker{
+	margin-right: -30px;
+}
+.search_input_date_element {
+	display: table-caption;
+	float: left;
 }

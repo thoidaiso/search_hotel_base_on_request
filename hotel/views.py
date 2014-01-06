@@ -6,7 +6,7 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
-
+from hotel.models import Users_Request_Form
 
 class IndexView(generic.ListView):
     template_name = 'hotel/index.html'
@@ -33,40 +33,50 @@ class ResultView(generic.ListView):
         published in the future).
         """
         return 
-
-
-def get_result(request):
-    search_name = request.POST['search_name']
-    check_in = request.POST['check_in']
-    check_out = request.POST['check_out']
-    room_count = request.POST['room_count']
-    guest_count = request.POST['guest_count']
-    vals = {"search_name": search_name,
-            "check_in": check_in,
-            "check_out": check_out,
-            "room_count": room_count,
-            'guest_count': guest_count,
-             }
-    print "\n vals==",vals
     
-#    p = get_object_or_404(Poll, pk=poll_id)
-#    try:
-#        selected_choice = p.choice_set.get(pk=request.POST['choice'])
-#    except(KeyError, Choice.DoesNotExist):
-#    return render(request, 'hotel/result.html', {
-#                    'poll':p, 'error_message':"You didn't select a choice."})
-#    else:
-#        print "\n\nprepare vote===",selected_choice
-#        selected_choice.votes +=1
-#        print "\nafter vote"
-#        selected_choice.save()
-#        print "\n\save",p
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-    return render(request, 'hotel/result.html')#, {
-#                    'poll':p, 'error_message':"You didn't select a choice."})
-    return HttpResponseRedirect(reverse('results'))
-
-
-
+    def get(self, request, *args, **kwargs):
+        print "\n\n get====",args
+        return render(request, self.template_name)
+    
+    def post(self, request, *args, **kwargs):
+        print "\n\n posst----"
+        return render(request, self.template_name)
+    
+#get search data from index page
+def get_result(request):
+    vals = {"search_name": request.POST['search_name'],
+            "check_in": request.POST['check_in'],
+            "check_out": request.POST['check_out'],
+            "room_count": request.POST['room_count'],
+            'guest_count': request.POST['guest_count'],
+             }
+    
+#    if request.method == 'POST': 
+#         print "\n method POST=="
+#         form = Users_Request_Form(request.POST) 
+#         print "\n form ==",form
+#         if form.is_valid(): 
+             
+    search_name = vals['search_name']
+    if not search_name:
+        return HttpResponseRedirect(reverse('index', args=()))
+    
+    #########
+    ###get hotel data in here for first request
+    hotel_data = []
+    for i in range(0,6):
+        hotel = {'name': 'Amancando',
+                 'location': '123, Le dinh chinh, quan 3',
+                 'price': 123,
+                 'currency': '$',
+                 'rating': '76%'
+                 }
+        
+        hotel_data.append(hotel)
+    
+    return render(request, 'hotel/result.html', {'vals': vals, 'hotel_data': hotel_data})
+#    return HttpResponseRedirect(reverse('result', args=(vals)))
+    
+def get_filter_result(request):
+    print "\n== get_result_with_extra_info"
+    return HttpResponseRedirect(reverse('index', args=()))

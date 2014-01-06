@@ -3,6 +3,8 @@ $(document).ready(function(){
 	/* ---- */
 	/* FORM */
 	/* ---- */
+	
+	
 	$('.search_filter_heading')
 		.click(
 			function() {
