@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hotel',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -69,7 +70,7 @@ WSGI_APPLICATION = 'search_hotel_base_on_request.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'search_hotel',                      # Or path to database file if using sqlite3.
+        'NAME': 'scraper2',                      # Or path to database file if using sqlite3.
         'USER': 'openerp',                      # Not used with sqlite3.
         'PASSWORD': 'openerp',                  # Not used with sqlite3.
         'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
