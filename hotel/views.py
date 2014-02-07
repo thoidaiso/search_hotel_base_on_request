@@ -75,7 +75,7 @@ def get_result(request):
     for i in range(0,6):
         hotel = {'name': 'Amancando',
                  'location': '123, Le dinh chinh, quan 3',
-                 'price': 123,
+                 'lowest_price': 123,
                  'currency': '$',
                  'user_rating': '7.6',
                  'id': '1',
