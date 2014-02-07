@@ -6,7 +6,10 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
-from hotel.models import Users_Request_Form
+from hotel.models import Users_Request_Form, Hotel
+from multiprocessing.queues import Queue
+from scraper.scraper.spiders.hotel_spider import HotelSpider
+from ConnectorToScrapy import ConnectorToScrapy
 
 class IndexView(generic.ListView):
     template_name = 'hotel/index.html'
@@ -41,6 +44,11 @@ class ResultView(generic.ListView):
     def post(self, request, *args, **kwargs):
         print "\n\n posst----"
         return render(request, self.template_name)
+
+class DetailView(generic.DetailView):
+    template_name = 'hotel/detail.html'
+    model = Hotel
+    
     
 #get search data from index page
 def get_result(request):
@@ -50,7 +58,7 @@ def get_result(request):
             "room_count": request.POST['room_count'],
             'guest_count': request.POST['guest_count'],
              }
-    
+    print "\n vals==",vals
 #    if request.method == 'POST': 
 #         print "\n method POST=="
 #         form = Users_Request_Form(request.POST) 
@@ -67,12 +75,21 @@ def get_result(request):
     for i in range(0,6):
         hotel = {'name': 'Amancando',
                  'location': '123, Le dinh chinh, quan 3',
-                 'price': 123,
+                 'lowest_price': 123,
                  'currency': '$',
-                 'rating': '76%'
+                 'user_rating': '7.6',
+                 'id': '1',
+                 'star_rating': '3',
                  }
         
         hotel_data.append(hotel)
+    
+#    try to call spider
+    print "\n try to call spider"
+    dict = {'spider': HotelSpider, 'args': [] }
+    conector = ConnectorToScrapy()
+    conector.run_spider(dict)
+    print "\n end call spider"
     
     return render(request, 'hotel/result.html', {'vals': vals, 'hotel_data': hotel_data})
 #    return HttpResponseRedirect(reverse('result', args=(vals)))
@@ -80,3 +97,8 @@ def get_result(request):
 def get_filter_result(request):
     print "\n== get_result_with_extra_info"
     return HttpResponseRedirect(reverse('index', args=()))
+
+
+        
+        
+

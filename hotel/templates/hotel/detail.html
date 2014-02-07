@@ -1,0 +1,80 @@
+{% load staticfiles %}
+<link href="{% static 'flexslider/flexslider.css' %}" type="text/css" media="screen" rel="stylesheet"/>	
+<script defer src="{% static 'flexslider/jquery.flexslider.js' %}"></script>
+<link href="{% static  'css/detail.css' %}" rel="stylesheet">
+
+<div id="popup_page">
+	<div id="popup_header">
+		<div id="popup_hotel_wraper">
+			<span class="popup_hotel_name">{{hotel.name}}</span>
+			<span class="popup_hotel_location">{{hotel.location}}</span>
+		</div>
+		<div id="popup_hotel_price_book_wraper">
+			<div id="popup_hotel_price_wrapper">
+				<span class="popup_hotel_price">{{hotel.lowest_price}}</span>
+				<span class="popup_hotel_currency">{{hotel.currency}}</span>
+				<div class="popup_hotel_detail_rating">
+					<span class="popup_hotel_detail_rating_with">with</span>
+					<span class="hotel_detail_rating">{{hotel.user_rating}}</span>
+					<div class="rating_symbol"></div>	
+				</div>
+			</div>
+			<div id="popup_hotel_booking">
+				<button class="btn_book">Book</button>
+			</div>
+		</div>
+	</div>
+	<div id="popup_header_extra">
+		<div class="popup_hotel_star hotel_star hotel_{{hotel.star_rating}}star"/>
+		<span class="popup_hotel_star_detail">{{hotel.star_rating}} star hotel</span>
+	</div>
+	<div id="popup_body">
+		<ul id="popup_tab" class="nav nav-tabs">
+		  <li class="active">
+		  	<a href="#popup_home" data-toggle="tab">Overview</a>
+		  </li>
+		  <li>
+		  	<a href="#popup_photo" data-toggle="tab">Photo Gallery</a>
+		  </li>
+		</ul>
+		<div id="popup_tab_content" class="tab-content">
+			<div class="tab-pane fade  active in" id="popup_home">
+				<div id="popup_hotel_breakline"></div>
+				<div id="popup_hotel_overview">
+					<div id="popup_hotel_description">
+						<span class="popup_content_heading">Hotel Description</span>
+						<span class="popup_span_hotel_description">{{hotel.description}}</span>
+					</div>
+					<div id="popup_hotel_service">
+						<span class="popup_content_heading">Service</span>
+						<span class="popup_span_hotel_description">{{hotel.service}}</span>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="popup_photo">
+				<div id="popup_hotel_photo">
+					<div id="slider" class="flexslider">
+						<ul class="slides" style="width: 200%;">
+							{% for image  in hotel.image_hotel_set.all %}
+							<li>
+								<img src="{{image.src}}" />
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div id="carousel" class="flexslider">
+						<ul class="slides">
+							{% for image  in hotel.image_hotel_set.all %}
+							<li class="popup_photo_slider_li">
+								<img src="{{image.src}}" />
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+</div>
