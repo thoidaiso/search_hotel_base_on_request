@@ -45,6 +45,8 @@ class Hotel(models.Model):
     order_in_page = models.SmallIntegerField(null=True, blank=True)
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=200)
+    area = models.CharField(max_length=200)
+    type = models.CharField(max_length=100)
     star_rating = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
     user_rating = models.FloatField(null=True, blank=True)
     lowest_price = models.SmallIntegerField(null=True, blank=True)

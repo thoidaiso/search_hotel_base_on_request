@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'chanhle'
 from scrapy.spider import BaseSpider
+from scrapy.contrib.spiders import CrawlSpider
 from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
 from scrapy import log
@@ -8,13 +9,21 @@ from post_data import *
 from datetime import datetime, timedelta
 from hotel.models import Hotel, Hotel_Domain
 import urllib
+from random import randint
 
 hotel_info_path = {
     'hotel_domain': './/*[@id="ctl00_ContentMain_CitySearchResult_v2_rptSearchResults_ctl00_lnkHotelName"]',
     'name': './/*[@id="ctl00_ContentMain_CitySearchResult_v2_rptSearchResults_ctl00_lnkHotelName"]',
     'hotel_info_tag': '//*[@id="hotel_result_item"]',
-    'star': 'ssrstars'
+    'star': 'ssrstars',
+    'start_price': '//span[starts-with(@id,"ctl00_ContentMain_CitySearchResult_v2_rptSearchResults_ctl")][ends-with(@id,"_clblPrice")]',
+    'score': '//a[starts-with(@id,"ctl00_ContentMain_CitySearchResult_v2_rptSearchResults_ctl")][ends-with(@id,"_lnkReviewScore")]/text()',
+
 }
+
+# class HotelDetail(CrawlSpider):
+
+
 
 
 class HotelSpider(BaseSpider):
@@ -71,11 +80,25 @@ class HotelSpider(BaseSpider):
                                 "Content-Type": "application/x-www-form-urlencoded"})
 
     def go_to_hotel(self, link):
-        return Request(url=link, callback=self.hotel_detail)
+        Request(url='http://www.agoda.com' + link, callback=self.hotel_detail)
 
     def hotel_detail(self, response):
+        ran = randint(2, 10)  #Inclusive
+        filename = 'detail' + str(ran)
+        open(filename + '.html', 'wb').write(response.body)
         print 'HOTEL DETAL .....'
+        sel = Selector(response)
+        location = sel.xpath('//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rLocation"]/text()').extract()
+        number_of_rooms = sel.xpath(
+            '//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rRooms"]/text()').extract()
+        description = sel.xpath(
+            '//div[@id="ctl00_ctl00_MainContent_ContentMain_HotelInformation1_pnlDescription"]/div/text()').extract()
+        room = sel.xpath('//tr[@class="tr553"]')
+        room_name = room.xpath('.//td[@class="room_name"]/div/a/span/text()').extract()
+        number_of_people = room.xpath(
+            './/div[starts-with(@id, "ctl00_ctl00_MainContent_ContentMain_RoomTypesListGrid_AB1771_rptRateContent_ct")][contains(@id, "_pnlOccupancy")][@class="dek"]/text()')
 
+        price = room.xpath('.//td[contains(@class,"tex_center gray_r sgrayu row_padding_")]/div/span[2]/text()').extract()
 
     def create_hotel(self, name, href, location, star_rating):
         for pos in range(0, len(name)):
@@ -84,10 +107,8 @@ class HotelSpider(BaseSpider):
             Hotel.objects.get_or_create(hotel_domain=obj, src=href[pos], name=name[pos], location=location[pos],
                                         defaults={'star_rating': rating})
 
-
     def after_search(self, response):
         log.msg("After Search ....", level=log.INFO)
-        from random import randint
 
         ran = randint(2, 10)  #Inclusive
         filename = response.url.split("/")[-2] + str(ran)
@@ -100,9 +121,10 @@ class HotelSpider(BaseSpider):
             '@href').extract()
         href = filter(None, map(lambda x: x.split('?')[0], urls))
         location = info.xpath('.//p/span[@class="black fontsmallb"]/text()').extract()
+        type = info.xpath('.//p/span[2][@class="fontsmallb black"]/text()').extract()
         star_rating = info.xpath('.//input[starts-with(@class,"ssrstars")]/@class').extract()
         self.create_hotel(name, href, location, star_rating)
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 
-        yield self.next_page(response)
+        self.next_page(response)
