@@ -1,0 +1,102 @@
+#popup_header{
+	float: left;
+	margin-left: 15px;
+	margin-right: 10px;
+}
+#popup_hotel_wraper{
+	width: 500px;
+	float: left;
+}
+#popup_hotel_price_book_wraper{
+		
+	min-height: 110px;
+	float: left;
+	background: url('../img/popup-vertical-divider.png') no-repeat top left;
+	padding-left: 25px;
+	width: 460px;
+}
+.popup_hotel_name{
+	font-size: 25px;
+}
+.popup_hotel_location{
+	font-family: Helvetica,Arial,sans-serif;
+	font-size: 12px;
+	color: #a39797;
+	float: left;
+}
+#popup_hotel_price_wrapper{
+	font-size: 45px;
+	font-family: Georgia,serif;
+	color: #3b2525;
+	width: 200px;
+	float: left;
+}
+#popup_hotel_booking{
+	float: left;
+	margin-top: 25px;
+	padding-left: 30px;
+}
+.btn_book{
+	color: #502d2d;
+	font-style: italic;
+	font-size: 25px;
+	border-radius: 5px 5px 5px 5px;
+	padding: 15px 30px 15px 30px;
+}
+
+.popup_hotel_star{
+	float: left;
+}
+#popup_header_extra{
+	float: left;
+	margin-left: 15px;
+}
+.popup_hotel_star_detail{
+	margin-left: 5px;
+}
+#popup_body{
+	padding-top: 180px;
+	font-size: 15px;
+}
+#popup_tab{
+	background-color: antiquewhite;
+}
+#popup_hotel_breakline{
+	background-image: url('../img/hotel_galleryview_divider.jpg');
+	background-repeat-x: repeat;
+	background-position: top;
+	height: 3px;
+}
+#popup_hotel_overview{
+	margin: 10px;
+}
+.popup_content_heading{
+	font-size: 20px;
+	font-style: italic;
+	font-family: Helvetica,Arial,sans-serif;
+	margin-bottom: 5px;
+}
+.popup_span_hotel_description{
+	float: left;
+	padding-bottom: 30px;
+}
+#popup_hotel_service{
+	margin-top: 10px;
+		
+	float: left;
+}
+#slider{
+	width: 50%;
+	margin-left: 25%;
+	margin-bottom: 10px;
+}
+.popup_photo_slider_li{
+	margin: 10px;
+}
+.popup_hotel_detail_rating_with{
+	font-size: 20px;
+	margin-top: 15px;
+}
+.popup_hotel_detail_rating{
+	display: flex;
+}

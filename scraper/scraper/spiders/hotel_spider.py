@@ -24,11 +24,19 @@ class HotelSpider(BaseSpider):
         "http://www.agoda.com/city/ho-chi-minh-city-vn.html",
     ]
 
-    def __init__(self, from_date=datetime.now() + timedelta(days=1), to_date=datetime.now() + timedelta(days=3)):
+    def __init__(self, args=[], from_date=datetime.now() + timedelta(days=1), to_date=datetime.now() + timedelta(days=3)):
         """
         Initial post data for search base on location
         """
-
+        if args:
+            from_date = args[0]
+            to_date = args[1]
+        elif not args and not from_date and not to_date:
+            from_date=datetime.now() + timedelta(days=1)
+            to_date=datetime.now() + timedelta(days=3)
+            
+        print "\n args==",args
+        print "\n from date==",from_date
         post_data_search_base_on_location[
             'ctl00$ctl00$MainContent$area_promo$CitySearchBox1$arrivaldate'] = from_date.strftime("%m/%d/%Y")
         post_data_search_base_on_location[
