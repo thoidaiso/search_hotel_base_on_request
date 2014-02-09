@@ -12,24 +12,31 @@ rating = (
 )
 
 #Save request from users
-class Users_Request(models.Model):
-    location = models.CharField(max_length=200)
-    price_from = models.FloatField(null=True, blank=True)
-    price_to = models.FloatField(null=True, blank=True)
-    star_rating = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
-    create_time = models.DateTimeField(null=True, blank=True)
-    currency = models.CharField(max_length=4, null=True, blank=True)
+#class Users_Request(models.Model):
+#    session_id = models.CharField(max_length=200)#Session id of web browser
+#    location = models.CharField(max_length=200)
+#    price_from = models.FloatField(null=True, blank=True)
+#    price_to = models.FloatField(null=True, blank=True)
+#    star_rating = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
+#    create_time = models.DateTimeField(null=True, blank=True)
+#    currency = models.CharField(max_length=4, null=True, blank=True)
+#
+#    date_start = models.DateField(null=True, blank=True)
+#    date_end = models.DateField(null=True, blank=True)
+#    room_count = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
+#    guess_count = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
+#    
+#
+#class Users_Request_Form(ModelForm):
+#    class Meta:
+#        model = Users_Request
 
-    date_start = models.DateTimeField(null=True, blank=True)
-    date_end = models.DateTimeField(null=True, blank=True)
-    room_count = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
-    guess_count = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
-
-
-class Users_Request_Form(ModelForm):
-    class Meta:
-        model = Users_Request
-
+class Location(models.Model):
+    name = models.CharField(max_length=200)
+    def __unicode__(self):
+        return self.name
+    
+    
 #Save domain to search hotel and their priority compare with other domain
 class Hotel_Domain(models.Model):
     name = models.CharField(max_length=100)
@@ -40,12 +47,13 @@ class Hotel_Domain(models.Model):
 
 #Save info about hotel
 class Hotel(models.Model):
-    user_request = models.ForeignKey(Users_Request, null=True, blank=True)
+#    user_request = models.ForeignKey(Users_Request, null=True, blank=True)
     hotel_domain = models.ForeignKey(Hotel_Domain, null=True, blank=True)
     order_in_page = models.SmallIntegerField(null=True, blank=True)
     name = models.CharField(max_length=100)
-    location = models.CharField(max_length=200)
-    area = models.CharField(max_length=200)
+    location = models.ForeignKey(Location, null=True, blank=True) #location of hotel like hochiminh---this field link to location
+    address = models.CharField(max_length=200) #full address, number of house, street, city
+    area = models.CharField(max_length=200) #like district 1- Ben thanh market
     type = models.CharField(max_length=100)
     star_rating = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
     user_rating = models.FloatField(null=True, blank=True)

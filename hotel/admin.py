@@ -1,5 +1,5 @@
 from django.contrib import admin
-from hotel.models import Users_Request, Hotel_Domain, Hotel, Room, Image_Hotel
+from hotel.models import  Hotel_Domain, Hotel, Room, Image_Hotel
 # Register your models here.
 
 
@@ -17,23 +17,23 @@ class RoomInline(admin.TabularInline):
 class ImageInline(admin.TabularInline):
     model = Image_Hotel
     extra = 5
-class Users_Request_Admin(admin.ModelAdmin):
-    #    Design form
-    fieldsets  = [
-                  (None, {'fields': ['location']}),
-                  ('Other Info', {'fields': ['price_from', 'price_to', 'currency', 'star_rating', 'create_time'], 'classes': ['collapse'] } )
-                  ]
-    
-    #    Design many2one
-    inlines = [HotelInline]
-    
-    #    Design form
-    list_display = ['location', 'price_from', 'price_to', 'currency', 'star_rating', 'create_time']
-    
-    #    add filter
-    list_filter = ['create_time']
-    
-admin.site.register(Users_Request, Users_Request_Admin)
+#class Users_Request_Admin(admin.ModelAdmin):
+#    #    Design form
+#    fieldsets  = [
+#                  (None, {'fields': ['location']}),
+#                  ('Other Info', {'fields': ['price_from', 'price_to', 'currency', 'star_rating', 'create_time'], 'classes': ['collapse'] } )
+#                  ]
+#    
+#    #    Design many2one
+#    inlines = [HotelInline]
+#    
+#    #    Design form
+#    list_display = ['location', 'price_from', 'price_to', 'currency', 'star_rating', 'create_time']
+#    
+#    #    add filter
+#    list_filter = ['create_time']
+#    
+#admin.site.register(Users_Request, Users_Request_Admin)
 
 class Hotel_Domain_Admin(admin.ModelAdmin):
      #    Design form

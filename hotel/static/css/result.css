@@ -190,6 +190,7 @@ background-color: #fff;
 #result_column{
 	width: 1078px;
 	float: left;
+	margin-top: -33px;
 }
 
 #result_view_count{
@@ -212,10 +213,10 @@ background-color: #fff;
 
 #result_sort_wrapper{
 	position: relative;
-	width: 188px;
+	width: 200px;
 	float: right;
 	top: 15px;
-	right: 15px;
+	right: 70px;
 	
 }
 #result_sort{
@@ -350,4 +351,10 @@ background-color: #fff;
 .search_input_date_element {
 	display: table-caption;
 	float: left;
+}
+.pagination {
+	padding-left: 25px;
+	position: absolute;
+	display: block;
+	margin: 10px 0px 10px;
 }

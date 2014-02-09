@@ -1,6 +1,3 @@
-/* 
-	author: istockphp.com
-*/
 jQuery(function($) {
 	
 	$('#popup_tab a').click(function (e) {
@@ -11,7 +8,7 @@ jQuery(function($) {
 	$("a.topopup").click(function() {
 			hotel_id = $(this).attr('href');
 			loading(hotel_id); // loading
-			setTimeout(function(){ // then show popup, deley in .5 second
+			setTimeout(function(){ // then show popup, delay in .5 second
 				loadPopup(); // function show popup 
 			}, 500); // .5 second
 	return false;
@@ -111,5 +108,26 @@ jQuery(function($) {
 		}
 		popupContentClick = 0;
 	}
+	
+	
 	/************** end: functions. **************/
 }); // jQuery End
+	
+	// POST page number to change pagination in  /get_result
+
+function changeResultPage(url, page, csrf_token)
+	{
+		jQuery.ajax({
+	         url: url,
+	         type: 'POST',
+	         data: {
+	         		'page': page,
+	         		csrfmiddlewaretoken: csrf_token,
+	         	},
+	         success: function(data)
+	         		{
+	         			$("#result_column").html(data);
+	         		}
+	         });
+	         
+	}

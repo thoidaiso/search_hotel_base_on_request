@@ -20,13 +20,15 @@
 	});
 	</script>
 	
+	<!-- SORT and FILTER Result -->
+     <script src="{% static 'js/sort_filter.js' %}"></script>
+     
     <!-- Bootstrap -->
     <link href="{% static 'bootstrap-3.0.3/dist/css/bootstrap.min.css' %}" rel="stylesheet">
 	<link href="{% static 'css/custom_selection.css' %}" rel="stylesheet">
     <link href="{% static 'css/result.css' %}" rel="stylesheet">
     
-    <!--Popup -->
-    <link href="{% static 'css/popup.css' %}" rel="stylesheet">
+    
 	 
 	 
  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -35,10 +37,7 @@
     <script src="{% static 'bootstrap-3.0.3/dist/js/bootstrap.min.js' %}"></script>
     
     
-    <!--Popup JS-->
-    <script src="{% static 'js/bootstrap_tab.js' %}"></script>
-     <script src="{% static 'js/popup.js' %}"></script>
-     
+    
 	
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -66,7 +65,7 @@
 				<div class="search_input_element input_text">
 				
 					<label for="search_name">Recent Search</label>
-				    <input type="text" id="search_name" class="search_name form-control" value="{{ vals.search_name }}" placeholder="Enter a city, address ">
+				    <input type="text" id="search_name" class="search_name form-control" value="{{ vals.location }}" placeholder="Enter a city, address ">
 				</div>
 				<div class="search_input_date_element">
 					<label for="check_in">Check-in</label>
@@ -184,8 +183,28 @@
 				</div>
 			</div>
 			</form>
+			<div id="result_sort_wrapper">
+				<div class="result_sort dropdown">
+					<span class="selected" >Most Popular</span>
+					<input type="hidden" name="sort_hotel" id="sort_hotel" value="most_popular"/>
+					<ul>
+						<li id="user_rating" class="selected">Most Popular</li>
+						<li id="name">Hotel name (A-Z)</li>
+						<li id="-name">Hotel name (Z-A)</li>	
+						<li id="price">Price (lowest first)</li>
+						<li id="-price">Price (highest first)</li>
+						<li id="star_rating">Star rating (lowest first)</li>
+						<li id="-star_rating">Star rating (highest first)</li>
+					</ul>
+				</div>
+				
+			</div>
+			<div id="result_column">
+					<!-- Line info about result -->
+				
+				{% include "hotel/hotel_grid_detail.html" with data=hotel_data  count_hotel=count_hotel %}			
+			</div>
 			
-			{% include "hotel/hotel_grid_detail.html" with data=hotel_data %}			
 		
 		</div>		
 		

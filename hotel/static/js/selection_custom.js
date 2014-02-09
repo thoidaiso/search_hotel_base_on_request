@@ -65,7 +65,7 @@ $(document).ready(function(){
 				$(this).siblings('li').removeClass('selected');
 				$(this).addClass('selected');
 				$(this).parent('ul').siblings('span.selected').html(sitem);
-				$(this).parent('ul').siblings('input').val(sid);
+				$(this).parent('ul').siblings('input').val(sid).trigger('change');
 			});
 			
 
