@@ -71,7 +71,7 @@ class Room(models.Model):
     hotel = models.ForeignKey(Hotel)
     name = models.CharField(max_length=100)
     price = models.FloatField()
-    room_info = models.TextField()
+    room_info = models.TextField(null=True, blank=True)
     number_of_people = models.SmallIntegerField(null=True, blank=True)
     promotion = models.FloatField(null=True, blank=True)
     currency = models.CharField(max_length=4)

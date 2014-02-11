@@ -56,9 +56,12 @@ class DetailView(generic.DetailView):
     
 #get search data from index page
 def get_result(request):
-    print "\n request Post==",request.POST
+    
+    print "\n request session==",request.session.get('filter')
     now = timezone.now()
     location = request.GET.get('search_name')
+    if location:
+        request.session['filter'] = {}
 #    location = re.sub('[-., ]+', '', location)
     #TODO:
 #        Get real location like hochiminh if input 'ho chi minh city'
@@ -73,8 +76,8 @@ def get_result(request):
     guest_count = request.GET.get('guest_count') or 0
     
     vals = {"location": location,
-            "check_in": check_in and check_in.date(),
-            "check_out": check_out and check_out.date(),
+            "check_in": request.GET.get('check_in') ,
+            "check_out": request.GET.get('check_out'),
             "room_count": int( room_count),
             'guest_count': int( guest_count),
             'create_time': now,
@@ -126,16 +129,21 @@ def get_result(request):
 #        call_spider(HotelSpider, location, check_in, check_out)
     
     
-    #    FILTER OR SORT RESULT HOTELS
-    filter = False
+    #   SORT RESULT HOTELS
+    filter_sort = False
     sort_type = request.POST.get('sort_type')
     if sort_type:
-        filter = True
+        filter_sort = True
         hotel_data = hotel_data.order_by(sort_type)
     else:
         hotel_data = hotel_data.order_by('-user_rating')
-        
-        
+    
+    # FILTER RESULT PAGE
+    return_data = filter_result_page(request, hotel_data)
+    hotel_data  = return_data['data']
+    filter_sort = return_data['filter']
+    
+    
     ####Pagination
     count_hotel = len(hotel_data)
     page_number = request.POST.get('page')
@@ -154,7 +162,7 @@ def get_result(request):
     
     
 #    render grid hotel result, if change page
-    if page_number or filter:
+    if page_number or filter_sort:
         print "\n return grid hotels detail"
         return render(request, 'hotel/hotel_grid_detail.html', {'data': hotels, 'count_hotel': count_hotel})
         
@@ -193,5 +201,54 @@ def call_spider(Spider, location, check_in, check_out):
         print "\n Error when call spider---",ValueError
         pass
     print "\n end call spider"
-        
 
+#FILTER RESULT PAGE BASE ON FILTER AND OLD FILTER IN SESSION
+def filter_result_page(request, hotel_data):
+    filter_sort = False
+    type_filter = request.POST.get('type_filter')
+    filter_content = request.POST.get('filter_content')
+
+    filter_session =  request.session.get('filter', False)
+    if filter_session:
+         filter_sort = True
+         
+    if type_filter and filter_content:
+#        Add filter to session to later filter
+        filter_sort = True
+        if filter_session:
+             filter_session[type_filter] = filter_content
+        else:
+            filter_session = { type_filter: filter_content }
+        
+    request.session['filter'] = filter_session
+    
+    print "\n filter sesssion---",filter_session
+#        filter hotel for each filter condition in session
+    if len(filter_session) > 0:
+        for key in filter_session.keys():
+            hotel_data = filter_hotel(key, filter_session[key], hotel_data)
+    
+    print "\n hotel data==",hotel_data
+        
+            
+    return {'data': hotel_data, 'filter': filter_sort}
+
+def filter_hotel(type_filter, filter_content, hotel_data):
+    if type_filter and filter_content:
+        print "\n type filter = ",type_filter,';;filter content;;',filter_content
+        
+        if type_filter == 'name':
+            hotel_data = hotel_data.filter(name__icontains=filter_content)
+        elif type_filter == 'lowest_price':
+            hotel_data = Hotel.objects.filter( lowest_price = filter_content)
+        
+        elif type_filter == 'star_rating':
+            hotel_data = Hotel.objects.filter( star_rating = filter_content)
+        
+        elif type_filter == 'user_rating':
+            hotel_data = Hotel.objects.filter( user_rating = filter_content)
+        
+        elif type_filter == 'area':
+            hotel_data = Hotel.objects.filter( area = filter_content)
+    
+    return hotel_data

@@ -52,7 +52,7 @@ position: static;
 	float: left;
 }
 .input_text{
-	
+	width: 500px;
 	margin-left: 24px;
 }
 .select_input_element{
@@ -75,7 +75,7 @@ position: static;
 .search_input_element{
 	display: table-caption;
 	float: left;
-	margin-right: 24px;
+	margin-right: 70px;
 	
 }
 .blank_in_search_button{
@@ -98,7 +98,7 @@ position: static;
 .selected{
 	font-weight: bold;
 }
-.btn_search  {
+.btn_search, .btn_search:hover {
 	background-color: #F5FF03;
 }
 #side_bar{
@@ -351,10 +351,16 @@ background-color: #fff;
 .search_input_date_element {
 	display: table-caption;
 	float: left;
+	margin-right: 70px;
 }
 .pagination {
 	padding-left: 25px;
 	position: absolute;
 	display: block;
 	margin: 10px 0px 10px;
+}
+
+#search_hotelname ,#search_hotelname_btn{
+	height: 40px;
+	font-size: 14px;
 }

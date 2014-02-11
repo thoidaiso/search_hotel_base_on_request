@@ -100,3 +100,57 @@
 .popup_hotel_detail_rating{
 	display: flex;
 }
+
+#room_content_wrap{
+	padding: 10px 200px 50px;
+}
+.header_room_info{
+	height: 50px;
+	font-size: 20px;
+	font-style: italic;
+	font-family: Helvetica,Arial,sans-serif;
+	background-color: #009899;
+}
+.header_room_content, .header_room_content_max_people, .header_room_content_price{
+	padding-right: 10px;
+	text-align: center;
+	vertical-align: middle;
+	border: 1px solid #96b2d9;
+}
+#popup_room{
+	background: #f1f1ea url('../img/bg-tile.jpg');
+}
+.room_content_table{
+	background-color: #FFFFFF;
+}
+.room_detail_wrap{
+	height: 100px;
+	background-image: url('../img/hotel_galleryview_divider.jpg');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+.room_detail_name_span{
+	font-size: 16px;
+	font-weight: 700;
+}
+.room_detail_name{
+	width: 300px;
+	/*border: 1px solid #96b2d9;*/
+	background: url('../img/popup-vertical-divider.png') no-repeat top left;
+	padding: 5px 25px 15px;
+}
+.room_detail_max_people, .room_detail_price{
+	font-size: 25px;
+	font-family: Georgia,serif;
+	color: #3b2525;
+	/*border: 1px solid #96b2d9;*/
+	text-align: center;
+		background: url('../img/popup-vertical-divider.png') no-repeat top left;
+
+}
+.header_room_content_max_people{
+	width: 100px;
+}
+.header_room_content_price{
+	width: 200px;
+}

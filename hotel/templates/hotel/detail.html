@@ -37,6 +37,9 @@
 		  <li>
 		  	<a href="#popup_photo" data-toggle="tab">Photo Gallery</a>
 		  </li>
+		  <li>
+		  	<a href="#popup_room" data-toggle="tab">Room</a>
+		  </li>
 		</ul>
 		<div id="popup_tab_content" class="tab-content">
 			<div class="tab-pane fade  active in" id="popup_home">
@@ -73,6 +76,47 @@
 						</ul>
 					</div>
 				</div>
+			</div>
+			<div class="tab-pane fade" id="popup_room">
+				<div id="room_content_wrap">
+					<table class="room_content_table">
+						<tr class="header_room_info">
+							<td class="header_room_content">
+								<span class="header_room_content_span">Room Types</span>
+							</td>
+							<td class="header_room_content_max_people">
+								<span class="header_room_content_span">Max</span>
+							</td>
+							<td class="header_room_content_price">
+								<span class="header_room_content_span">Price</span>
+							</td>
+						</tr>
+						{% for room  in hotel.room_set.all %}
+						
+						<tr class="room_detail_wrap">
+							<td class="room_detail_name">
+								<span class="room_detail_name_span">{{room.name}}</span>
+								<div id="room_detail_image">
+									{% for image  in room.image_hotel_set.all %}
+										<img src="{{image.src}}" style="height:120px;width:160px;" />
+									{% endfor %}
+								</div>
+							</td>
+							<td class="room_detail_max_people">
+								<span class="room_detail_max_people_span">{{room.number_of_people}}</span>
+							</td>
+							<td class="room_detail_price">
+								<span class="room_detail_price_span">{{room.price}}</span>
+								<span class="room_detail_currency_span">{{room.currency}}</span>
+							</td>
+							
+						</tr>
+					
+					{% endfor %}
+					</table>
+					
+				</div>
+				
 			</div>
 		</div>
 	</div>

@@ -59,13 +59,13 @@
 				<span class="app_logo">Search Hotel</span>
 			</div>
 			<!-- Main Search -->
-			<form action="{% url 'get_filter_result'  %}" method="POST">
+			<form action="{% url 'get_result'  %}" method="GET">
 				{% csrf_token %}
 			<div id="main_search">
 				<div class="search_input_element input_text">
 				
 					<label for="search_name">Recent Search</label>
-				    <input type="text" id="search_name" class="search_name form-control" value="{{ vals.location }}" placeholder="Enter a city, address ">
+				    <input type="text" name="search_name" id="search_name" class="search_name form-control" value="{{ vals.location }}" placeholder="Enter a city, address ">
 				</div>
 				<div class="search_input_date_element">
 					<label for="check_in">Check-in</label>
@@ -75,7 +75,7 @@
 					<label for="check_out">Check-out</label>
 					<input type="text" name="check_out" id="check_out" class="datepicker form-control unstyled" value="{{ vals.check_out }}">
 				</div>
-				<div class="search_input_element">
+				<!-- <div class="search_input_element">
 					<label for="room">Rooms</label>
 					<div class="dropdown subject">
 						<span class="selected">{{ vals.room_count }}</span>
@@ -87,8 +87,8 @@
 							<li id="4">4</li>
 						</ul>
 					</div>					
-				</div>
-				<div class="search_input_element">
+				</div> -->
+				<!-- <div class="search_input_element">
 					<label for="room">Guests</label>
 					<div class="dropdown subject">
 						<span class="selected">{{ vals.guest_count }}</span>
@@ -100,7 +100,7 @@
 							<li id="4">4</li>
 						</ul>
 					</div>	
-				</div>
+				</div> -->
 				<div class="search_input_element">
 					<div class="blank_in_search_button">
 					</div>
@@ -112,10 +112,12 @@
 			<!-- Side bar -->
 			<div id="side_bar">
 				<div id="inner_sidebar">
+					
 					<div id="search_filter">
 						<div id="search_filter_name">
 							<div class="input-group input-group-lg search_filter_att">
-							  <input type="text" id="search_hotelname" name="search_hotelname" class="form-control" placeholder="Hotel name contains..">
+							  <input type="text" id="search_hotelname" name="search_hotelname" class="form-control" 
+							  	placeholder="Hotel name contains.." >
 							  <span class="input-group-btn">
 								<button type="button" id="search_hotelname_btn" class="btn btn-default btn-lg">
 								  <span class="glyphicon glyphicon-search"/>
@@ -188,11 +190,11 @@
 					<span class="selected" >Most Popular</span>
 					<input type="hidden" name="sort_hotel" id="sort_hotel" value="most_popular"/>
 					<ul>
-						<li id="user_rating" class="selected">Most Popular</li>
+						<li id="-user_rating" class="selected">Most Popular</li>
 						<li id="name">Hotel name (A-Z)</li>
 						<li id="-name">Hotel name (Z-A)</li>	
-						<li id="price">Price (lowest first)</li>
-						<li id="-price">Price (highest first)</li>
+						<li id="lowest_price">Price (lowest first)</li>
+						<li id="-lowest_price">Price (highest first)</li>
 						<li id="star_rating">Star rating (lowest first)</li>
 						<li id="-star_rating">Star rating (highest first)</li>
 					</ul>
