@@ -34,7 +34,8 @@ class HotelSpider(BaseSpider):
         "http://www.agoda.com/city/ho-chi-minh-city-vn.html",
     ]
 
-    def __init__(self, args={}, from_date=datetime.now() + timedelta(days=1), to_date=datetime.now() + timedelta(days=3)):
+    def __init__(self, args={}, from_date=datetime.now() + timedelta(days=1),
+                 to_date=datetime.now() + timedelta(days=3)):
         """
         Initial post data for search base on location
         """
@@ -44,9 +45,9 @@ class HotelSpider(BaseSpider):
         elif not args and not from_date and not to_date:
             from_date = datetime.now() + timedelta(days=1)
             to_date = datetime.now() + timedelta(days=3)
-            
-        print "\n args==",args
-        print "\n from date==",from_date
+
+        print "\n args==", args
+        print "\n from date==", from_date
         post_data_search_base_on_location[
             'ctl00$ctl00$MainContent$area_promo$CitySearchBox1$arrivaldate'] = from_date.strftime("%m/%d/%Y")
         post_data_search_base_on_location[
@@ -74,30 +75,13 @@ class HotelSpider(BaseSpider):
                                           dont_click=True,
                                           callback=self.after_search)]
 
-
-    def next_page(self, response):
-        print '\n------------NEXT PAGE--------------'
-        next_page_datax = urllib.urlencode(next_page_data)
-
-        return Request(url=response.url, method='POST',
-                       body=next_page_datax, callback=self.after_search,
-                       headers={"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                                "Accept-Encoding": "gzip,deflate,sdch",
-                                "Accept-Language": "vi,en-US;q=0.8,en;q=0.6",
-                                "Cache-Control": "max-age=0",
-                                "Connection": "keep-alive",
-                                "Content-Type": "application/x-www-form-urlencoded"})
-
-    def go_to_hotel(self, link):
-        Request(url='http://www.agoda.com' + link, callback=self.hotel_detail)
-
     def hotel_detail(self, response):
         ran = randint(2, 10)  #Inclusive
         filename = 'detail' + str(ran)
         open(filename + '.html', 'wb').write(response.body)
         print 'HOTEL DETAL .....'
         sel = Selector(response)
-#        location = sel.xpath('//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rLocation"]/text()').extract()
+        #        location = sel.xpath('//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rLocation"]/text()').extract()
         number_of_rooms = sel.xpath(
             '//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rRooms"]/text()').extract()
         description = sel.xpath(
@@ -105,39 +89,42 @@ class HotelSpider(BaseSpider):
         room = sel.xpath('//tr[@class="tr553"]')
         room_name = room.xpath('.//td[@class="room_name"]/div/a/span/text()').extract()
         number_of_people = room.xpath(
-            './/div[starts-with(@id, "ctl00_ctl00_MainContent_ContentMain_RoomTypesListGrid_AB1771_rptRateContent_ct")][contains(@id, "_pnlOccupancy")][@class="dek"]/text()')
-
-        price = room.xpath('.//td[contains(@class,"tex_center gray_r sgrayu row_padding_")]/div/span[2]/text()').extract()
+            './/div[starts-with(@id, "ctl00_ctl00_MainContent_ContentMain_RoomTypesListGrid_AB1771_rptRateContent_ct")][contains(@id, "_pnlOccupancy")][@class="dek"]/text()').extract()
+        number_of_people = filter(None, map(lambda x: re.sub('[\r\n\t]', '', x.split(',')[0]), number_of_people))
+        price = room.xpath(
+            './/td[contains(@class,"tex_center gray_r sgrayu row_padding_")]/div/span[2]/text()').extract()
+        print '=============', room_name
+        print '=============', number_of_people
+        print '=============', price
 
     def create_hotel(self, name, href, location_obj, star_rating, users_rating, currency, lowest_price, address, area):
-        log.msg("len name ...."+str(len(name)), level=log.INFO)
+        log.msg("len name ...." + str(len(name)), level=log.INFO)
         for pos in range(0, len(name)):
-            log.msg("name ...."+str(pos), level=log.INFO)
+            log.msg("name ...." + str(pos), level=log.INFO)
             obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
             rating = star_rating[pos] and star_rating[pos].split(' ')[0].replace('ssrstars', '')[0] or 1
-            Hotel.objects.get_or_create(hotel_domain = obj, 
-                                        src          = href[pos], 
-                                        name         = name[pos], 
-                                        location     = location_obj, 
-                                        currency     = currency[pos],
-                                        lowest_price = lowest_price[pos],
-                                        user_rating  = float( users_rating[pos]),
-                                        address      = address[pos],
-                                        area         = area[pos],
-                                        defaults     = {'star_rating': rating})
-    
+            Hotel.objects.get_or_create(hotel_domain=obj,
+                                        src=href[pos],
+                                        name=name[pos],
+                                        location=location_obj,
+                                        currency=currency[pos],
+                                        lowest_price=lowest_price[pos],
+                                        user_rating=float(users_rating[pos]),
+                                        address=address[pos],
+                                        area=area[pos],
+                                        defaults={'star_rating': rating})
+
     def create_location(self, location):
-        object, create = Location.objects.get_or_create(name = location)
+        object, create = Location.objects.get_or_create(name=location)
         return object
-            
-        
+
 
     def after_search(self, response):
         log.msg("After Search ....", level=log.INFO)
 
-        ran = randint(2, 10)  #Inclusive
-        filename = response.url.split("/")[-2] + str(ran)
-        open(filename + '.html', 'wb').write(response.body)
+        # ran = randint(2, 10)  #Inclusive
+        # filename = response.url.split("/")[-2] + str(ran)
+        # open(filename + '.html', 'wb').write(response.body)
 
         sel = Selector(response)
         info = sel.xpath(hotel_info_path['hotel_info_tag'])
@@ -145,51 +132,61 @@ class HotelSpider(BaseSpider):
         urls = info.xpath('.//a[@class="hot_name"]').xpath(
             '@href').extract()
         href = filter(None, map(lambda x: x.split('?')[0], urls))
-        
+
         currency = info.xpath('.//div/span[@class="fontxlargeb purple"]/span/text()').extract()
-        
+
         lowest_price = []
         list_price = info.xpath('.//div/span[@class="fontxlargeb purple"]/text()').extract()
         for price in list_price:
             try:
-                lowest_price.append( int(price))
+                lowest_price.append(int(price))
             except:
                 pass
-        
-#        Get location of hotel like hochiminh, singapore
-        location =sel.xpath('//*[@id="ctl00_head1"]/title/text()').extract()
+
+                #        Get location of hotel like hochiminh, singapore
+        location = sel.xpath('//*[@id="ctl00_head1"]/title/text()').extract()
         if location:
             location = location[0]
-            location = re.sub('[\r\n\t]','', location)
+            location = re.sub('[\r\n\t]', '', location)
             location = location[:-7] #delete ' Hotels' at the end of the string location
         else:
             location = ''
         location_obj = self.create_location(location)
-            
-#        Get the rating of hotel, some hotel dont have user rating. So boring
+
+        #        Get the rating of hotel, some hotel dont have user rating. So boring
         users_rating = []
-        for pos in range(1, len(name)+1):
+        for pos in range(1, len(name) + 1):
             startIDofA = "ctl00_ContentMain_CitySearchResult_v2_rptSearchResults_ctl"
-            lastIDofA  = "_lnkReviewScore"
+            lastIDofA = "_lnkReviewScore"
             if pos < 10:
                 IDofA = startIDofA + "0" + str(pos) + lastIDofA
             else:
                 IDofA = startIDofA + str(pos) + lastIDofA
-            xpathquery = './/a[@id="'+ IDofA +'"]/text()'
-            
+            xpathquery = './/a[@id="' + IDofA + '"]/text()'
+
             user_rating = info.xpath(xpathquery).extract()
             if user_rating:
                 users_rating.append(user_rating[0].encode('ascii', 'ignore')[-3:])
             else:
                 users_rating.append(0)
-        
+
         address = info.xpath('.//span[@class="fontsmalli"]/text()').extract()
         area = info.xpath('.//p/span[@class="black fontsmallb"]/text()').extract()
         type = info.xpath('.//p/span[2][@class="fontsmallb black"]/text()').extract()
         star_rating = info.xpath('.//input[starts-with(@class,"ssrstars")]/@class').extract()
-        
+
         self.create_hotel(name, href, location_obj, star_rating, users_rating, currency, lowest_price, address, area)
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 
-        self.next_page(response)
+        print '\n------------NEXT PAGE--------------'
+        next_page_datax = urllib.urlencode(next_page_data)
+
+        yield Request(url=response.url, method='POST',
+                      body=next_page_datax, callback=self.after_search,
+                      headers={"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                               "Accept-Encoding": "gzip,deflate,sdch",
+                               "Accept-Language": "vi,en-US;q=0.8,en;q=0.6",
+                               "Cache-Control": "max-age=0",
+                               "Connection": "keep-alive",
+                               "Content-Type": "application/x-www-form-urlencoded"})

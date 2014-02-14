@@ -22,7 +22,7 @@ DOWNLOAD_DELAY = 1
 DUPEFILTER_CLASS = 'scrapy.dupefilter.BaseDupeFilter'
 
 import sys
-sys.path.append('/home/luan/Django_workspace/search_hotel_base_on_request')
+sys.path.append('../../../search_hotel_base_on_request')
 
 # DJANGO SETTING
 import os
@@ -34,7 +34,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'search_hotel_base_on_request.settings'
 #    from django.core.management import setup_environ
 #
 #    f, filename, desc = imp.find_module('settings', [path])
-#    project = imp.load_module('settings', f, filename, desc)       
+#    project = imp.load_module('settings', f, filename, desc)
 #
 #    setup_environ(project)
 #
