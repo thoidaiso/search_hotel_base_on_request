@@ -75,12 +75,11 @@ class Room_Admin(admin.ModelAdmin):
                   ('Price', {'fields': ['price','currency'], 'classes': ['collapse'] } ),
                   ('People', {'fields': ['number_of_people']}),
                   ('Description', {'fields': ['room_info'], 'classes': ['collapse']}),
-                  ('Promotion', {'fields': ['promotion']}),
                   
                   ]
     
     #    Design form
-    list_display = ['name', 'hotel', 'price', 'currency', 'number_of_people', 'room_info', 'promotion']
+    list_display = ['name', 'hotel', 'price', 'currency', 'number_of_people', 'room_info']
     
     #    add filter
     list_filter = ['hotel', 'number_of_people']

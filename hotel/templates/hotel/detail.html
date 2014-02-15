@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load hotel_tag %}
 <link href="{% static 'flexslider/flexslider.css' %}" type="text/css" media="screen" rel="stylesheet"/>	
 <script defer src="{% static 'flexslider/jquery.flexslider.js' %}"></script>
 <link href="{% static  'css/detail.css' %}" rel="stylesheet">
@@ -12,7 +13,7 @@
 		</div>
 		<div id="popup_hotel_price_book_wraper">
 			<div id="popup_hotel_price_wrapper">
-				<span class="popup_hotel_price">{{hotel.lowest_price}}</span>
+				<span class="popup_hotel_price">{{ hotel|get_hotel_lowest_price:request.GET.date_start  }}</span>
 				<span class="popup_hotel_currency">{{hotel.currency}}</span>
 				<div class="popup_hotel_detail_rating">
 					<span class="popup_hotel_detail_rating_with">with</span>
@@ -85,7 +86,7 @@
 								<span class="header_room_content_span">Room Types</span>
 							</td>
 							<td class="header_room_content_max_people">
-								<span class="header_room_content_span">Max</span>
+								<span class="header_room_content_span">Number of people</span>
 							</td>
 							<td class="header_room_content_price">
 								<span class="header_room_content_span">Price</span>
@@ -106,7 +107,12 @@
 								<span class="room_detail_max_people_span">{{room.number_of_people}}</span>
 							</td>
 							<td class="room_detail_price">
-								<span class="room_detail_price_span">{{room.price}}</span>
+								<span class="room_detail_price_span">
+										
+										{{ room|get_room_price:request.GET.date_start  }}
+									
+
+								</span>
 								<span class="room_detail_currency_span">{{room.currency}}</span>
 							</td>
 							

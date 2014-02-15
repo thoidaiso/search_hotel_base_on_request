@@ -25,7 +25,7 @@
 	float: left;
 }
 #popup_hotel_price_wrapper{
-	font-size: 45px;
+	font-size: 40px;
 	font-family: Georgia,serif;
 	color: #3b2525;
 	width: 200px;
@@ -149,7 +149,7 @@
 
 }
 .header_room_content_max_people{
-	width: 100px;
+	width: 250px;
 }
 .header_room_content_price{
 	width: 200px;

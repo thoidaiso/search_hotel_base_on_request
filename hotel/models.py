@@ -1,6 +1,6 @@
 from django.db import models
 from django.forms import ModelForm
-
+from django import template
 # Create your models here.
 
 rating = (
@@ -32,7 +32,8 @@ rating = (
 #        model = Users_Request
 
 class Location(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200) #full name of location
+    short_name = models.CharField(max_length=100) #short name, use to check location of hotel ex: hochiminh, hanoi
     def __unicode__(self):
         return self.name
     
@@ -66,19 +67,29 @@ class Hotel(models.Model):
     def __unicode__(self):
         return self.name
 
+
+    
 #Save info about room
 class Room(models.Model):
     hotel = models.ForeignKey(Hotel)
     name = models.CharField(max_length=100)
-    price = models.FloatField()
+    price = models.FloatField(null=True, blank=True)
     room_info = models.TextField(null=True, blank=True)
-    number_of_people = models.SmallIntegerField(null=True, blank=True)
-    promotion = models.FloatField(null=True, blank=True)
+    number_of_people = models.CharField(max_length=100, null=True, blank=True)
+#    promotion = models.FloatField(null=True, blank=True)
     currency = models.CharField(max_length=4)
 
     def __unicode__(self):
         return self.name
+    
 
+class Price_Book(models.Model):
+    hotel = models.ForeignKey(Hotel, null=True, blank=True)
+    room = models.ForeignKey(Room)
+    hotel_domain = models.ForeignKey(Hotel_Domain, null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    date_start = models.DateField(null=True, blank=True)
+    date_end = models.DateField(null=True, blank=True)
 
 class Image_Hotel(models.Model):
     hotel = models.ForeignKey(Hotel, null=True, blank=True)

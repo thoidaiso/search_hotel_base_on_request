@@ -56,8 +56,8 @@ class DetailView(generic.DetailView):
     
 #get search data from index page
 def get_result(request):
-    
-    print "\n request session==",request.session.get('filter')
+    Hotel.objects.filter(name='New World Saigon Hotel').update(description = 'description')
+#    print "\n request check in==",request.GET.get('check_in')
     now = timezone.now()
     location = request.GET.get('search_name')
     if location:
@@ -81,8 +81,26 @@ def get_result(request):
             "room_count": int( room_count),
             'guest_count': int( guest_count),
             'create_time': now,
+            'search_hotelname': request.GET.get('search_hotelname') or '',
+            'search_star_rating_5': request.GET.get('search_star_rating_5') ,
+            'search_star_rating_4': request.GET.get('search_star_rating_4') ,
+            'search_star_rating_3': request.GET.get('search_star_rating_3') ,
+            'search_star_rating_2': request.GET.get('search_star_rating_2') ,
+            'search_star_rating_1': request.GET.get('search_star_rating_1') ,
+            
+            'search_facility_internet': request.GET.get('search_facility_internet') ,
+            'search_facility_air_trans': request.GET.get('search_facility_air_trans') ,
+            'search_facility_bar': request.GET.get('search_facility_bar') ,
+            'search_facility_business': request.GET.get('search_facility_business') ,
+            'search_facility_restaurant': request.GET.get('search_facility_restaurant') ,
+            'search_facility_spa': request.GET.get('search_facility_spa') ,
+            'search_facility_car_park': request.GET.get('search_facility_car_park') ,
+            'search_facility_gym': request.GET.get('search_facility_gym') ,
+            'search_facility_smoke_area': request.GET.get('search_facility_smoke_area') ,
+            'search_facility_child': request.GET.get('search_facility_child') ,
              }
-    print "\n vals==",vals
+    
+#    print "\n vals==",vals
     
     
     
@@ -130,18 +148,17 @@ def get_result(request):
     
     
     #   SORT RESULT HOTELS
-    filter_sort = False
+    sort_result = False
     sort_type = request.POST.get('sort_type')
+    print "\n sort type==",sort_type
     if sort_type:
-        filter_sort = True
+        sort_result = True
         hotel_data = hotel_data.order_by(sort_type)
     else:
         hotel_data = hotel_data.order_by('-user_rating')
     
     # FILTER RESULT PAGE
-    return_data = filter_result_page(request, hotel_data)
-    hotel_data  = return_data['data']
-    filter_sort = return_data['filter']
+    hotel_data = filter_result_page(request, hotel_data)
     
     
     ####Pagination
@@ -162,9 +179,9 @@ def get_result(request):
     
     
 #    render grid hotel result, if change page
-    if page_number or filter_sort:
+    if page_number or sort_result:
         print "\n return grid hotels detail"
-        return render(request, 'hotel/hotel_grid_detail.html', {'data': hotels, 'count_hotel': count_hotel})
+        return render(request, 'hotel/hotel_grid_detail.html', {'data': hotels, 'count_hotel': count_hotel, 'date_start':request.GET.get('check_in') })
         
     
     return render(request, 'hotel/result.html', {'vals': vals, 'hotel_data': hotels, 'count_hotel': count_hotel})
@@ -205,33 +222,61 @@ def call_spider(Spider, location, check_in, check_out):
 #FILTER RESULT PAGE BASE ON FILTER AND OLD FILTER IN SESSION
 def filter_result_page(request, hotel_data):
     filter_sort = False
-    type_filter = request.POST.get('type_filter')
-    filter_content = request.POST.get('filter_content')
+    print "\n 1111111111111111=======request======",request.GET
 
-    filter_session =  request.session.get('filter', False)
-    if filter_session:
-         filter_sort = True
+    if request.GET.get('search_hotelname'):
+        print "=========hotel name===",request.GET.get('search_hotelname')
+        hotel_data = filter_hotel('name', request.GET.get('search_hotelname'), hotel_data)
+    
+    
+    star_rating = []
+    if request.GET.get('search_star_rating_1'):
+        star_rating.append( int(request.GET.get('search_star_rating_1')))
+        
+    if request.GET.get('search_star_rating_2'):
+        star_rating.append( int(request.GET.get('search_star_rating_2')))
+
+    if request.GET.get('search_star_rating_3'):
+        star_rating.append( int(request.GET.get('search_star_rating_3')))
+    
+    if request.GET.get('search_star_rating_4'):
+        star_rating.append( int(request.GET.get('search_star_rating_4')))
          
-    if type_filter and filter_content:
-#        Add filter to session to later filter
-        filter_sort = True
-        if filter_session:
-             filter_session[type_filter] = filter_content
-        else:
-            filter_session = { type_filter: filter_content }
+    if request.GET.get('search_star_rating_5'):
+        star_rating.append( int(request.GET.get('search_star_rating_5'))) 
         
-    request.session['filter'] = filter_session
+    if star_rating:
+        hotel_data = filter_hotel('star_rating', star_rating, hotel_data)
+         
+    #Filter service
+    if request.GET.get('search_facility_internet'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_internet'), hotel_data)
     
-    print "\n filter sesssion---",filter_session
-#        filter hotel for each filter condition in session
-    if len(filter_session) > 0:
-        for key in filter_session.keys():
-            hotel_data = filter_hotel(key, filter_session[key], hotel_data)
+    if request.GET.get('search_facility_air_trans'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_air_trans'), hotel_data)
     
-    print "\n hotel data==",hotel_data
+    if request.GET.get('search_facility_bar'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_bar'), hotel_data)
+    
+    if request.GET.get('search_facility_business'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_business'), hotel_data)
+    
+    if request.GET.get('search_facility_spa'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_spa'), hotel_data)
+    
+    if request.GET.get('search_facility_car_park'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_car_park'), hotel_data)
+    
+    if request.GET.get('search_facility_gym'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_gym'), hotel_data)
+    
+    if request.GET.get('search_facility_smoke_area'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_smoke_area'), hotel_data)
+    
+    if request.GET.get('search_facility_child'):
+        hotel_data = filter_hotel('service', request.GET.get('search_facility_child'), hotel_data)
         
-            
-    return {'data': hotel_data, 'filter': filter_sort}
+    return hotel_data
 
 def filter_hotel(type_filter, filter_content, hotel_data):
     if type_filter and filter_content:
@@ -239,16 +284,21 @@ def filter_hotel(type_filter, filter_content, hotel_data):
         
         if type_filter == 'name':
             hotel_data = hotel_data.filter(name__icontains=filter_content)
+            
         elif type_filter == 'lowest_price':
-            hotel_data = Hotel.objects.filter( lowest_price = filter_content)
+            hotel_data = hotel_data.filter( lowest_price = filter_content)
         
         elif type_filter == 'star_rating':
-            hotel_data = Hotel.objects.filter( star_rating = filter_content)
+            hotel_data = hotel_data.filter( star_rating__in = filter_content)
         
         elif type_filter == 'user_rating':
-            hotel_data = Hotel.objects.filter( user_rating = filter_content)
+            hotel_data = hotel_data.filter( user_rating = filter_content)
         
         elif type_filter == 'area':
-            hotel_data = Hotel.objects.filter( area = filter_content)
+            hotel_data = hotel_data.filter( area = filter_content)
+        
+        elif type_filter == 'service':
+            hotel_data = hotel_data.filter( service__icontains = filter_content)
     
+    print "\n return hotel==",hotel_data
     return hotel_data
