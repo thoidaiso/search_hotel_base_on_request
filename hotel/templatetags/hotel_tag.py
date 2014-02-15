@@ -30,6 +30,8 @@ def get_hotel_lowest_price(hotel_obj, from_date):
         price_books = Price_Book.objects.filter(hotel=hotel_obj).order_by('-date_start').order_by('price')
     
     print "price_books",price_books
+    if not price_books:
+        return 'NA'
     return price_books[0].price
 
 
