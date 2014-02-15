@@ -47,13 +47,27 @@ numhotel:0
 """
 
 a="""
-method:hoteldetail
-task:jumpdatefrom
-hotelId:W482136
-datefrom:2014-02-14
-iso_currency_code:USD
-search:true
-cacheBug:uIeNkTaw
+cacheBug:3JBWHWi0
+cityid:1162
+countryid:VN
+datefrom:2014-02-15
+filters:
+finderhotel:{"af":[],"r":"","m":"","s":""}
+iso_currency_code:VND
+keycache:e7032d3d7d3996dfe3e81ac55b9708fe
+kindofpromotion:
+maxprice:0
+method:searchbooking
+promotion:false
+regionId:1162
+showshortlist:
+sortby:Review
+typeStar:
+typegroup:
+typesort:false
+typeview:viewlist
+hotelIds:
+numhotel:0
 """
 c = """
 ctl00$scriptmanager1:ctl00$ContentMain$upResultFooter|ctl00$ContentMain$lbtnFooterNext

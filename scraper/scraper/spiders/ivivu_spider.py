@@ -37,7 +37,8 @@ class IvivuSpider(BaseSpider):
         # ivivu_search['sbk_n_nights'] = str((to_date - from_date).days)
 
         ivivu_search['datefrom'] = from_date.strftime("%Y-%m-%d")
-        ivivu_detail['datefrom'] = from_date.strftime("%Y-%m-%d")
+        ivivu_detail['date_from'] = from_date.strftime("%d-%m-%Y")
+        ivivu_detail['date_to'] = to_date.strftime("%d-%m-%Y")
         self.page = 1
 
     def parse(self, response):
@@ -52,8 +53,8 @@ class IvivuSpider(BaseSpider):
 
     def get_detail(self, response):
         sel = Selector(response)
-        rooms = sel.xpath('//div[@class="room"]')
-        room_name = rooms.xpath('//div[@class="room"]/table/tbody/tr/th/a/text()').extract()
+        rooms = sel.xpath('//div[@class="table_hoteldetail after"]')
+        room_name = rooms.xpath('.//h2/text()').extract()
         print room_name
         price = 0
         for room in rooms:
@@ -68,9 +69,10 @@ class IvivuSpider(BaseSpider):
 
     def hotel_detail(self, response):
         sel = Selector(response)
-        img = sel.xpath('//div[@class="slide-image"]/div/ul/li/a/@href').extract()
+        img = sel.xpath('//div[@class="contents_new_box"]/ul/li/a[@class="hover_bg_inset"]/@href').extract()
         print 'IMAGE ----------', img
-
+        ivivu_detail['hotelId'] = response.url.split('/')[-2].split('-')[-1]
+        print ivivu_detail
 
         yield Request(url='http://www.ivivu.com/request.php?' + urllib.urlencode(ivivu_detail),
                       callback=self.get_detail)
@@ -79,27 +81,29 @@ class IvivuSpider(BaseSpider):
 
         sel = Selector(response)
         info = sel.xpath('//div[@id="results-list"]')
-        name = info.xpath('.//li/h2/a[@class="hrefHD"]/text()').extract()
-        href = info.xpath('.//li/h2/a/@href').extract()
-        address = info.xpath('.//div[@class="location"]/text()').extract()
-        description = info.xpath('.//p[@class="desc"]/text()').extract()
-        currency = sel.xpath('.//td/span[@class="amount"]/text()').re(r'([A-Za-z-]+)')
-        star_rating = info.xpath('.//li/h2/a/img/@src').re(r'([0-9-]+\.[0])')
-        users_rating = info.xpath('.//div/span/span/text()').extract()
+        name = info.xpath('.//li/div/h2/a[@class="hrefHD"]/text()').extract()
+        href = info.xpath('.//li/div/h2/a/@href').extract()
+        address = info.xpath('.//li/div/span/text()').extract()
+        description = ''
+
+        star_rating = info.xpath('//li/div/h2/img[@class="rating"]/@src').re(r'([0-9-]+\.[0])')
+        users_rating = info.xpath('.//strong[@class="review_score"]/text()').re(r'([0-9-].[0-9-])')
         lowest_price = []
-        list_price = sel.xpath('.//td/span[@class="amount"]/text()').re(r'([0-9-]+)')
+        if ivivu_search['iso_currency_code'] == 'VND':
+            currency = sel.xpath('.//div/span/div[@class="price_from"]').re(r'([A-Za-z-]+)')
+            list_price = sel.xpath('.//div/span/div[@class="price_from"]/text()').re(r'([0-9-]+)')
+        elif ivivu_search['iso_currency_code'] == 'USD':
+            currency = sel.xpath('.//span[@class="amount block"]/text()').re(r'([A-Za-z-]+)')
+            list_price = sel.xpath('.//span[@class="amount block"]/text()').re(r'([0-9-]+)')
+
         for price in list_price:
             try:
                 lowest_price.append(int(price))
             except:
                 pass
-        print name
-        # print href
-        # print address
-        # print description
-        # print currency
-        # print star_rating
-        # print list_price
+        print users_rating
+        print currency
+        print list_price
         for url in href[0:1]:
             yield Request(url=url, callback=self.hotel_detail)
 
@@ -107,8 +111,8 @@ class IvivuSpider(BaseSpider):
         if not name:
             print 'Complete ----------'
             return
-        self.page += 1
-        ivivu_search['page'] = self.page
+        # self.page += 1
+        # ivivu_search['page'] = self.page
         # yield Request(url='http://www.ivivu.com/request.php?' + urllib.urlencode(ivivu_search),
         #               callback=self.after_search)
 
