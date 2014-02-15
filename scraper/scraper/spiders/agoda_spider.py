@@ -5,7 +5,6 @@ from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
 from scrapy import log
 import urllib
-from random import randint
 import re
 from hotel_spider import HotelSpider
 from post_data import *
