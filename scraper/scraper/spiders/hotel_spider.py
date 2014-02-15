@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'chanhle'
 from scrapy.spider import BaseSpider
-from scrapy.contrib.spiders import CrawlSpider
 from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
 from scrapy import log
@@ -78,6 +77,9 @@ class HotelSpider(BaseSpider):
 
     def parse(self, response):
         log.msg("Start Scraping ....", level=log.INFO)
+        sel = Selector(response)
+        VIEWSTATE = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
+        post_data_search_base_on_location['__VIEWSTATE'] = VIEWSTATE
         return [FormRequest.from_response(response,
                                           formdata=post_data_search_base_on_location,
                                           dont_click=True,
@@ -220,6 +222,8 @@ class HotelSpider(BaseSpider):
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 
         print '\n------------NEXT PAGE--------------'
+        VIEWSTATE = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
+        next_page_data['__VIEWSTATE'] = VIEWSTATE
         next_page_datax = urllib.urlencode(next_page_data)
 
         yield Request(url=response.url, method='POST',
