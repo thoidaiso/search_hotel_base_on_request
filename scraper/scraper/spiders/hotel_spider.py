@@ -7,7 +7,7 @@ from scrapy.http import FormRequest, Request
 from scrapy import log
 from post_data import *
 from datetime import datetime, timedelta
-from hotel.models import Hotel, Hotel_Domain, Location
+from hotel.models import Hotel, Hotel_Domain, Location, Room, Price_Book
 import urllib
 from random import randint
 import re
@@ -33,7 +33,10 @@ class HotelSpider(BaseSpider):
     start_urls = [
         "http://www.agoda.com/city/ho-chi-minh-city-vn.html",
     ]
-
+    
+    date_start = None
+    date_end = None
+    
     def __init__(self, args={}, from_date=datetime.now() + timedelta(days=1),
                  to_date=datetime.now() + timedelta(days=3)):
         """
@@ -45,6 +48,7 @@ class HotelSpider(BaseSpider):
         elif not args and not from_date and not to_date:
             from_date = datetime.now() + timedelta(days=1)
             to_date = datetime.now() + timedelta(days=3)
+        
 
         print "\n args==", args
         print "\n from date==", from_date
@@ -67,6 +71,10 @@ class HotelSpider(BaseSpider):
         next_page_data['ddlCheckInMonthYear'] = from_date.strftime("%m,%Y")
         next_page_data['ddlCheckOutDay'] = to_date.strftime("%d")
         next_page_data['ddlCheckInMonthYear'] = to_date.strftime("%m,%Y")
+        
+        #assign value to global variable for later use
+        self.date_start = from_date
+        self.date_end = to_date
 
     def parse(self, response):
         log.msg("Start Scraping ....", level=log.INFO)
@@ -93,17 +101,40 @@ class HotelSpider(BaseSpider):
         number_of_people = filter(None, map(lambda x: re.sub('[\r\n\t]', '', x.split(',')[0]), number_of_people))
         price = room.xpath(
             './/td[contains(@class,"tex_center gray_r sgrayu row_padding_")]/div/span[2]/text()').extract()
-        print '=============', room_name
-        print '=============', number_of_people
-        print '=============', price
+        print '====room_name=========', room_name
+        print '======number_of_people=======', number_of_people
+        print '======price=======', price
+        print "======description=======", description
+        
+    def create_room(self, hotel_name, room_name, number_of_people, price):
+        log.msg("create room", level=log.INFO)
+        hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
+        hotel_obj, created = Hotel.objects.get_or_create(name=hotel_name, priority=1)
+        for pos in range(0, len(room_name)):
+            log.msg("name ...." + room_name, level=log.INFO)
+            room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
+                                       name = room_name[pos],
+                                       number_of_people = int(number_of_people[pos]))
+    
+    
+    def create_price_book_period(self, hotel_obj, room_obj, price):
+        log.msg("create price infog", level=log.INFO)
+        hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
+        
+        Price_Book.objects.update_or_create(hotel = hotel_obj,
+                                            room = room_obj,
+                                            hotel_domain = hotel_domain_obj,
+                                            date_start = self.date_start,
+                                            date_end = self.date_end,
+                                            price = float(price))
 
     def create_hotel(self, name, href, location_obj, star_rating, users_rating, currency, lowest_price, address, area):
         log.msg("len name ...." + str(len(name)), level=log.INFO)
+        hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
         for pos in range(0, len(name)):
             log.msg("name ...." + str(pos), level=log.INFO)
-            obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
             rating = star_rating[pos] and star_rating[pos].split(' ')[0].replace('ssrstars', '')[0] or 1
-            Hotel.objects.get_or_create(hotel_domain=obj,
+            Hotel.objects.get_or_create(hotel_domain=hotel_domain_obj,
                                         src=href[pos],
                                         name=name[pos],
                                         location=location_obj,
@@ -114,8 +145,17 @@ class HotelSpider(BaseSpider):
                                         area=area[pos],
                                         defaults={'star_rating': rating})
 
+    def update_hotel(self, hotel_name, description):
+        log.msg("update description for hotel=="+ description)
+        obj, created = Hotel.objects.update_or_create(name=hotel_name,
+                                                      description = description)
+    
+    
+        
     def create_location(self, location):
-        object, create = Location.objects.get_or_create(name=location)
+        short_name = location = re.sub(' ', '', location)
+        object, create = Location.objects.get_or_create(name=location,
+                                                        short_name=short_name)
         return object
 
 
