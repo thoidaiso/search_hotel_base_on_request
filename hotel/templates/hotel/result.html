@@ -117,7 +117,7 @@
 						<div id="search_filter_name">
 							<div class="input-group input-group-lg search_filter_att">
 							  <input type="text" id="search_hotelname" name="search_hotelname" class="form-control" 
-							  	placeholder="Hotel name contains.." >
+							  	placeholder="Hotel name contains.." value="{{ vals.search_hotelname }}">
 							  <span class="input-group-btn">
 								<button type="button" id="search_hotelname_btn" class="btn btn-default btn-lg">
 								  <span class="glyphicon glyphicon-search"/>
@@ -128,45 +128,111 @@
 						</div>
 					</div>
 					<div id="search_filter">
-						<div id="search_filter_wrapper">
+						<!-- <div id="search_filter_wrapper">
 							<a class="search_filter_heading">
 								<span class="search_filter_heading_label">Price Range</span>
 							</a>
 							<div style="display: block;">
 								
 							</div>
-						</div>
+						</div> -->
 						<!-- Amenities menu -->
+						
+						
 						<div id="search_filter_wrapper">
 							<a href="#" class="search_filter_heading">
-								<span class="search_filter_heading_label">Amenities</span>
+								<span class="search_filter_heading_label">Star rating</span>
 							</a>
-							<dov  id="block_search" class="block_search close">
+							<dov  id="block_search" class="block_search ">
 								<div id="search_filter_control">
 									<!-- Get all -->
-									<div id="search_checkbox_any">
-										<input type="checkbox" id="search_amenity_any" name="search_amenity_any"/>
-										<span class="search_filter_any">I'm not picky</span>
+									<!-- <div id="search_checkbox_any">
+										<input type="checkbox" id="search_star_rating_any" name="search_star_rating_any"/>
+										<span class="search_filter_any">All</span>
 									</div>
-									
+									 -->
 									<!-- List to get -->
 									<div id="search_filter_list">
 										<ul>
 											<li>
-												<input type="checkbox" id="search_amenity_free_wifi" />
-												<span class="search_filter_list_label">Free Wifi</span>
+												<input type="checkbox" id="search_star_rating_5" name="search_star_rating_5" value="5" {%if vals.search_star_rating_5 %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">5 Stars</span>
 											</li>
 											<li>
-												<input type="checkbox" id="search_amenity_free_breakfast"/>
-												<span class="search_filter_list_label">Free Breakfast</span>
+												<input type="checkbox" id="search_star_rating_4" name="search_star_rating_4" value="4" {%if vals.search_star_rating_4 %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">4 Stars</span>
 											</li>
 											<li>
-												<input type="checkbox" id="search_amenity_pool"/>
-												<span class="search_filter_list_label">Pool</span>
+												<input type="checkbox" id="search_star_rating_3" name="search_star_rating_3" value="3" {%if vals.search_star_rating_3 %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">3 Stars</span>
 											</li>
 											<li>
-												<input type="checkbox" id="search_amenity_spa"/>
-												<span class="search_filter_list_label">Spa</span>
+												<input type="checkbox" id="search_star_rating_2" name="search_star_rating_2" value="2" {%if vals.search_star_rating_2 %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">2 Stars</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_star_rating_1" name="search_star_rating_1" value="1" {%if vals.search_star_rating_1 %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">1 Stars</span>
+											</li>
+										</ul>
+									</div>
+								</div>
+						</div>
+						
+						<div id="search_filter_wrapper">
+							<a href="#" class="search_filter_heading">
+								<span class="search_filter_heading_label">Hotel Facilities</span>
+							</a>
+							<dov  id="block_search" class="block_search ">
+								<div id="search_filter_control">
+									<!-- Get all -->
+									<!-- <div id="search_checkbox_any">
+										<input type="checkbox" id="search_star_rating_any" name="search_star_rating_any"/>
+										<span class="search_filter_any">All</span>
+									</div>
+									 -->
+									<!-- List to get -->
+									<div id="search_filter_list">
+										<ul>
+											<li>
+												<input type="checkbox" id="search_facility_internet" name="search_facility_internet" value="wi" {%if vals.search_facility_internet %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Internet</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_air_trans" name="search_facility_air_trans" value="airport" {%if vals.search_facility_air_trans %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Airport Transfer</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_bar" name="search_facility_bar" value="bar" {%if vals.search_facility_bar %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Bar</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_business" name="search_facility_business" value="business" {%if vals.search_facility_business %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Business Facilities</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_restaurant" name="search_facility_restaurant" value="restaurant" {%if vals.search_facility_restaurant %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Restaurant</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_spa" name="search_facility_spa" value="sauna" {%if vals.search_facility_spa %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Spa/Sauna</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_car_park" name="search_facility_car_park" value="park" {%if vals.search_facility_car_park %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Car Park</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_gym" name="search_facility_gym" value="fitness" {%if vals.search_facility_gym %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Gym/Fitness</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_smoke_area" name="search_facility_smoke_area" value="smok" {%if vals.search_facility_smoke_area %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Smoking area</span>
+											</li>
+											<li>
+												<input type="checkbox" id="search_facility_child" name="search_facility_child" value="1" {%if vals.search_facility_child %} checked="True" {%endif%}/>
+												<span class="search_filter_list_label">Family/Child Friendly</span>
 											</li>
 										</ul>
 									</div>
@@ -174,6 +240,7 @@
 								
 								
 						</div>
+						
 					</div>
 						
 
@@ -204,7 +271,7 @@
 			<div id="result_column">
 					<!-- Line info about result -->
 				
-				{% include "hotel/hotel_grid_detail.html" with data=hotel_data  count_hotel=count_hotel %}			
+				{% include "hotel/hotel_grid_detail.html" with data=hotel_data  count_hotel=count_hotel  date_start=vals.check_in %}			
 			</div>
 			
 		

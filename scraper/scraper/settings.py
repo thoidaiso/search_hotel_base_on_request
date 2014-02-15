@@ -22,7 +22,7 @@ DOWNLOAD_DELAY = 1
 DUPEFILTER_CLASS = 'scrapy.dupefilter.BaseDupeFilter'
 
 import sys
-sys.path.append('../../../search_hotel_base_on_request')
+sys.path.append('/home/luan/Django_workspace/search_hotel_base_on_request')
 
 # DJANGO SETTING
 import os

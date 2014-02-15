@@ -86,88 +86,122 @@ class HotelSpider(BaseSpider):
                                           callback=self.after_search)]
 
     def hotel_detail(self, response):
+        log.msg("hotel detail", level=log.INFO)
         ran = randint(2, 10)  #Inclusive
         filename = 'detail' + str(ran)
         open(filename + '.html', 'wb').write(response.body)
         print 'HOTEL DETAL .....'
         sel = Selector(response)
         #        location = sel.xpath('//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rLocation"]/text()').extract()
-        number_of_rooms = sel.xpath(
-            '//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rRooms"]/text()').extract()
+#        number_of_rooms = sel.xpath(
+#            '//td[@id="ctl00_ctl00_MainContent_ContentMain_ThumbPhotos_rRooms"]/text()').extract()
+#            '//li[@id="ctl00_ctl00_MainContent_ContentMain_mainHotelPhotoHD_rRooms"]/span/text()').extract()
+        
+        hotel_name = sel.xpath('//span[@id="ctl00_ctl00_MainContent_ContentMain_HotelHeaderHD_lblHotelName"]/text()').extract()
+        if len(hotel_name) == 0:
+            hotel_name = sel.xpath('//span[@id="ctl00_ctl00_MainContent_ContentMain_hotelheader1_lblHotelName"]/text()').extract()
+        
+        hotel_name = hotel_name[0]
+        
         description = sel.xpath(
             '//div[@id="ctl00_ctl00_MainContent_ContentMain_HotelInformation1_pnlDescription"]/div/text()').extract()
+#            '//div[@id="ctl00_ctl00_MainContent_ContentMain_HotelInformation1_pnlDescription"]/div/div/span/text()').extract()
         room = sel.xpath('//tr[@class="tr553"]')
         room_name = room.xpath('.//td[@class="room_name"]/div/a/span/text()').extract()
         number_of_people = room.xpath(
             './/div[starts-with(@id, "ctl00_ctl00_MainContent_ContentMain_RoomTypesListGrid_AB1771_rptRateContent_ct")][contains(@id, "_pnlOccupancy")][@class="dek"]/text()').extract()
         number_of_people = filter(None, map(lambda x: re.sub('[\r\n\t]', '', x.split(',')[0]), number_of_people))
+        number_of_people = [x for x in number_of_people if number_of_people.index(x)%2 ==0]
+        
         price = room.xpath(
             './/td[contains(@class,"tex_center gray_r sgrayu row_padding_")]/div/span[2]/text()').extract()
-        print '====room_name=========', room_name
-        print '======number_of_people=======', number_of_people
-        print '======price=======', price
-        print "======description=======", description
+        
+        price = [x for x in price if price.index(x)%2 ==1]
+#        from scrapy.shell import inspect_response
+#        inspect_response(response, self)
+        log.msg('file==='+'detail' + str(ran), level=log.INFO)
+#        log.msg('====number_of_rooms========='+number_of_rooms[0], level=log.INFO)
+        log.msg('====hotel_name========='+hotel_name, level=log.INFO)
+        log.msg('====room_name========='+room_name[0], level=log.INFO)
+        log.msg('======number_of_people======='+ number_of_people[0], level=log.INFO)
+        log.msg('======price======='+price[0], level=log.INFO)
+        log.msg("======description======="+ description[0], level=log.INFO)
+        
+        self.update_hotel(hotel_name, description[0])
+        self.create_room(hotel_name, room_name, number_of_people, price)
         
     def create_room(self, hotel_name, room_name, number_of_people, price):
-        log.msg("create room", level=log.INFO)
+        log.msg("create room for"+ hotel_name, level=log.INFO)
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
-        hotel_obj, created = Hotel.objects.get_or_create(name=hotel_name, priority=1)
+        hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
+        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
         for pos in range(0, len(room_name)):
-            log.msg("name ...." + room_name, level=log.INFO)
+            log.msg("name ...." + room_name[pos], level=log.INFO)
             room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
                                        name = room_name[pos],
-                                       number_of_people = int(number_of_people[pos]))
+                                       number_of_people = number_of_people[pos])
+            log.msg("price:"+ price[0], level=log.INFO)
+            self.create_price_book_period(hotel_obj, room_obj, price[pos])
     
     
     def create_price_book_period(self, hotel_obj, room_obj, price):
-        log.msg("create price infog", level=log.INFO)
+        log.msg("create price infog"+price, level=log.INFO)
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
-        
-        Price_Book.objects.update_or_create(hotel = hotel_obj,
-                                            room = room_obj,
-                                            hotel_domain = hotel_domain_obj,
-                                            date_start = self.date_start,
-                                            date_end = self.date_end,
-                                            price = float(price))
+        Price_Book.objects.get_or_create(hotel = hotel_obj,
+                                        room = room_obj,
+                                        hotel_domain = hotel_domain_obj,
+                                        date_start = self.date_start,
+                                        date_end = self.date_end,
+                                        price = float(price))
 
     def create_hotel(self, name, href, location_obj, star_rating, users_rating, currency, lowest_price, address, area):
-        log.msg("len name ...." + str(len(name)), level=log.INFO)
+        
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
-        for pos in range(0, len(name)):
-            log.msg("name ...." + str(pos), level=log.INFO)
-            rating = star_rating[pos] and star_rating[pos].split(' ')[0].replace('ssrstars', '')[0] or 1
-            Hotel.objects.get_or_create(hotel_domain=hotel_domain_obj,
-                                        src=href[pos],
-                                        name=name[pos],
-                                        location=location_obj,
-                                        currency=currency[pos],
-                                        lowest_price=lowest_price[pos],
-                                        user_rating=float(users_rating[pos]),
-                                        address=address[pos],
-                                        area=area[pos],
-                                        defaults={'star_rating': rating})
+        if len(href) and len(name) and len(currency) and len(users_rating) and len(address) and len(area):
+            log.msg("len name ...." + str(name[0]), level=log.INFO)
+            for pos in range(0, len(name)):
+                log.msg("name ...." + str(pos), level=log.INFO)
+                rating = star_rating[pos] and star_rating[pos].split(' ')[0].replace('ssrstars', '')[0] or 1
+                hotel_obj, created = Hotel.objects.get_or_create(hotel_domain=hotel_domain_obj,
+                                            src=href[pos],
+                                            name=name[pos],
+                                            location=location_obj,
+                                            currency=currency[pos],
+                                            address=address[pos],
+                                            area=area[pos],
+                                            defaults={'star_rating': rating, 
+                                                      'user_rating': float(users_rating[pos]),
+                                                      'lowest_price': lowest_price[pos],
+                                                      }
+                                            )
+                if not created and lowest_price[pos] < hotel_obj.lowest_price:
+                    Hotel.objects.filter(pk=hotel_obj.id).update(lowest_price = lowest_price[pos])
+                    
+        
+        log.msg("end len name ...." + str(len(name)), level=log.INFO)
 
     def update_hotel(self, hotel_name, description):
-        log.msg("update description for hotel=="+ description)
-        obj, created = Hotel.objects.update_or_create(name=hotel_name,
-                                                      description = description)
+        if description:
+            log.msg("update description for hotel=="+ description)
+            log.msg("hotel_name for hotel=="+ hotel_name)
+            obj = Hotel.objects.filter(name=hotel_name).update(description = description)
     
     
         
     def create_location(self, location):
-        short_name = location = re.sub(' ', '', location)
+        short_name = re.sub(' ', '', location)
         object, create = Location.objects.get_or_create(name=location,
                                                         short_name=short_name)
         return object
 
 
     def after_search(self, response):
-        log.msg("After Search ....", level=log.INFO)
 
-        # ran = randint(2, 10)  #Inclusive
-        # filename = response.url.split("/")[-2] + str(ran)
-        # open(filename + '.html', 'wb').write(response.body)
-
+        ran = randint(2, 10)  #Inclusive
+        filename = response.url.split("/")[-2] + str(ran)
+        open(filename + '.html', 'wb').write(response.body)
+        
+        log.msg("After Search ...."+ filename, level=log.INFO)
         sel = Selector(response)
         info = sel.xpath(hotel_info_path['hotel_info_tag'])
         name = info.xpath('.//a[@class="hot_name"]/text()').extract()
@@ -220,7 +254,7 @@ class HotelSpider(BaseSpider):
         self.create_hotel(name, href, location_obj, star_rating, users_rating, currency, lowest_price, address, area)
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
-
+        log.msg("-------------NEXT PAGE-----------", level=log.INFO)
         print '\n------------NEXT PAGE--------------'
         VIEWSTATE = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
         next_page_data['__VIEWSTATE'] = VIEWSTATE
