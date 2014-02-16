@@ -195,7 +195,7 @@ class AgodaSpider(HotelSpider):
             rating.append(el and el.split(' ')[0].replace('ssrstars', '')[0] or 1)
         log.msg("Create Hotel", level=log.INFO)
         self.create_hotel('agoda.com', name, href, location_obj, rating, users_rating, currency, lowest_price, address,
-                          area)
+                          area, 1)
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 

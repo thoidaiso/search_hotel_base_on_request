@@ -31,7 +31,7 @@ def get_hotel_lowest_price(hotel_obj, from_date):
     
     print "price_books",price_books
     if not price_books:
-        return 'N/A'
+        return hotel_obj.lowest_price
     return price_books[0].price
 
 @register.filter

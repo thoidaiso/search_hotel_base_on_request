@@ -93,7 +93,7 @@ class IvivuSpider(HotelSpider):
         
         location_obj = self.create_location(location)
         self.create_hotel('ivivu.com', name, href, location_obj, star_rating, users_rating, currency, lowest_price, address,
-                          area)
+                          area, 2)
         
         print '\n NEXT PAGE--------'
         if not name:
@@ -109,15 +109,22 @@ class IvivuSpider(HotelSpider):
         Response:: Room Info
         @param response:
         """
+        hotel_name = response.meta['hotel']
         sel = Selector(response)
+#        from scrapy.shell import inspect_response
+#        inspect_response(response, self)
         rooms = sel.xpath('//div[@class="table_hoteldetail after"]')
         room_name = rooms.xpath('.//h2/text()').extract()
         print room_name
         price = rooms.xpath('//span[@class="price "]/text()').re(r'([0-9-].[0-9-])')
         print 'PRICE -------------------', price
-        number_of_people = rooms.xpath('.//td[@valign="middle"][@class="col_2"]')
-        print number_of_people
+        number_of_people_data = rooms.xpath('.//td[@valign="middle"][@class="col_2"]/text()').extract()
+        number_of_people = []
+        for number in number_of_people_data:
+            number_of_people.append( number.replace('\r\n','').strip()) 
+        print "\n number_of_people==",number_of_people
         
+#        print "\n hotel_name==",hotel_name
         self.create_room(hotel_name, room_name, number_of_people, price)
 
     def hotel_detail(self, response):
@@ -151,4 +158,4 @@ class IvivuSpider(HotelSpider):
             self.create_image(hotel_name, image, False)
         
         yield Request(url='http://www.ivivu.com/request.php?' + urllib.urlencode(ivivu_detail),
-                      callback=self.get_detail)
+                      callback=self.get_detail, meta={'hotel': hotel_name})

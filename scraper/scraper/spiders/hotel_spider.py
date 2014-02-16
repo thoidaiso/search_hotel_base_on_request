@@ -86,6 +86,7 @@ class HotelSpider(BaseSpider):
 #        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
         for pos in range(0, len(room_name)):
             log.msg("name ...." + room_name[pos], level=log.INFO)
+            log.msg("number_of_people ...." + number_of_people[pos], level=log.INFO)
             room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
                                        name = room_name[pos],
                                        number_of_people = number_of_people[pos])
@@ -107,7 +108,7 @@ class HotelSpider(BaseSpider):
             Price_Book.objects.filter(pk=obj.id).update(price = float(price))
             
     def create_hotel(self, spider_name, name, href, location_obj, star_rating, users_rating, currency, lowest_price,
-                     address, area):
+                     address, area, priority):
         """
         @param spider_name:
         @param name:
@@ -121,20 +122,22 @@ class HotelSpider(BaseSpider):
         @param area:
         """
         log.msg("len name ...." + str(len(name)), level=log.INFO)
+        print "\n currency==",currency
         print star_rating
-        for pos in range(0, len(name)):
-            log.msg("name ...." + name[pos], level=log.INFO)
-            obj, created = Hotel_Domain.objects.get_or_create(name=spider_name, priority=1)
-            obj, created = Hotel.objects.get_or_create(hotel_domain=obj,
+        if len(name) == len(href) == len(address) == len(area) == len(currency) == len(star_rating) == len(users_rating) == len(lowest_price):
+            for pos in range(0, len(name)):
+                log.msg("name ...." + name[pos], level=log.INFO)
+                obj, created = Hotel_Domain.objects.get_or_create(name=spider_name, priority=priority)
+                obj, created = Hotel.objects.get_or_create(hotel_domain=obj,
                                         src=href[pos],
                                         name=name[pos].strip(),
                                         location=location_obj,
-                                        currency=currency[pos],
                                         address=address[pos],
                                         area=area[pos],
                                         defaults={'star_rating': int(float( star_rating[pos] )),
                                                   'user_rating': float(users_rating[pos]),
                                                   'lowest_price': lowest_price[pos],
+                                                  'currency': currency[pos],
                                                   })
 #            print "\n create =",obj.id
 
