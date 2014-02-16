@@ -41,7 +41,7 @@
 					</div>
 					<div class="hotel_price_rating">
 						<div class="hotel_price_wrapper">
-							<span class="hotel_detail_price">{{ hotel.lowest_price  }}</span>
+							<span class="hotel_detail_price">{{ hotel|get_hotel_lowest_price:request.GET.check_in  }}</span>
 							<span class="hotel_detail_currency">{{hotel.currency}}</span>
 						</div>
 						<div class="hotel_detail_rating_wrapper">

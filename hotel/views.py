@@ -13,6 +13,7 @@ from datetime import datetime
 from django.utils import timezone
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from templatetags import hotel_tag
 
 
 class IndexView(generic.ListView):
@@ -172,6 +173,8 @@ def get_result(request):
     # FILTER RESULT PAGE
     hotel_data = filter_result_page(request, hotel_data)
     
+    #FILTER TO GET BEST HOTEL INFO IF HAVE 2 RECORD FOR SAME HOTEL BY 2 DOMAIN
+    hotel_data = filter_duplicate_hotel(hotel_data, check_in)
     
     ####Pagination
     count_hotel = len(hotel_data)
@@ -230,6 +233,30 @@ def call_spider(Spider, location, check_in, check_out):
         print "\n Error when call spider---",ValueError
         pass
     print "\n end call spider"
+
+
+#FILTER TO GET BEST HOTEL INFO IF HAVE 2 RECORD FOR SAME HOTEL BY 2 DOMAIN
+#AT THE MOMENT ONLY CHOOSE HOTEL WHICH HAVE LOWER PRICE THAN
+def filter_duplicate_hotel(hotel_data, check_in):
+    remove_index_hotel_data = []
+    for i in range(0, len(hotel_data)-1):
+        for j in range(i+1, len(hote_data)):
+            if hotel_data[i].name ==hotel_data[i].name:
+                #Start to validate to choose best hotel
+                if get_hotel_lowest_price(hotel_data[i], check_in) > get_hotel_lowest_price(hotel_data[j], check_in):
+                    remove_index_hotel_data.append(j)
+                else:
+                    remove_index_hotel_data.append(i)
+    
+    if remove_index_hotel_data:
+        remove_index_hotel_data.sort(reverse=True)
+        for index in remove_index_hotel_data:
+            hotel_data.pop(index)
+    
+    return hotel_data
+    
+                       
+
 
 #FILTER RESULT PAGE BASE ON FILTER AND OLD FILTER IN SESSION
 def filter_result_page(request, hotel_data):

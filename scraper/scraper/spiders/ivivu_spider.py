@@ -98,7 +98,7 @@ class IvivuSpider(HotelSpider):
         print '\n NEXT PAGE--------'
         if not name:
             print 'Complete ----------'
-            return
+#            return
             self.page += 1
             ivivu_search['page'] = self.page
             yield Request(url='http://www.ivivu.com/request.php?' + urllib.urlencode(ivivu_search),

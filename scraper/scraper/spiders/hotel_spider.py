@@ -84,14 +84,15 @@ class HotelSpider(BaseSpider):
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
         hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
 #        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
-        for pos in range(0, len(room_name)):
-            log.msg("name ...." + room_name[pos], level=log.INFO)
-            log.msg("number_of_people ...." + number_of_people[pos], level=log.INFO)
-            room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
-                                       name = room_name[pos],
-                                       number_of_people = number_of_people[pos])
-            log.msg("price:"+ price[0], level=log.INFO)
-            self.create_price_book_period(hotel_obj, room_obj, price[pos])
+        if len(room_name) == len(number_of_people) == len(price):
+            for pos in range(0, len(room_name)):
+                log.msg("name ...." + room_name[pos], level=log.INFO)
+                log.msg("number_of_people ...." + number_of_people[pos], level=log.INFO)
+                room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
+                                           name = room_name[pos],
+                                           number_of_people = number_of_people[pos])
+                log.msg("price:"+ price[0], level=log.INFO)
+                self.create_price_book_period(hotel_obj, room_obj, price[pos])
     
     
     def create_price_book_period(self, hotel_obj, room_obj, price):
