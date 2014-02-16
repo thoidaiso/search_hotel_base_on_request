@@ -1,0 +1,27 @@
+.search_match{
+	text-align: center;
+	font-size: 40px;
+	font-family: Georgia,serif;
+	color: #3b2525;
+	padding-top: 150px;
+}
+.search_key{
+	color: #0283de;
+}
+
+.location_list_wrap{
+	text-align: center;
+	font-size: 40px;
+	font-family: Georgia,serif;
+	color: #0283de;
+	padding-left: 400px;
+	border-left: 1px solid #CDCDCD;
+	border-right: 1px solid #CDCDCD;
+}
+.location_detail_wrap{
+	background-color: #f8f8f8;
+	padding: 5px 10px;
+	border: 1px solid #cdcdcd;
+	width: 800px;
+	margin: 10px;
+}

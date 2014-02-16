@@ -8,7 +8,7 @@ from scrapy import log
 import urllib
 from post_data import *
 from datetime import datetime, timedelta
-
+import re
 
 class IvivuSpider(HotelSpider):
     name = "ivivu"
@@ -49,13 +49,15 @@ class IvivuSpider(HotelSpider):
         @return:
         """
         sel = Selector(response)
+#        from scrapy.shell import inspect_response
+#        inspect_response(response, self)
         info = sel.xpath('//div[@id="results-list"]')
         name = info.xpath('.//li/div/h2/a[@class="hrefHD"]/text()').extract()
         href = info.xpath('.//li/div/h2/a/@href').extract()
         address = info.xpath('.//li/div/span/text()').extract()
         description = ''
 
-        star_rating = info.xpath('//li/div/h2/img[@class="rating"]/@src').re(r'([0-9-]+\.[0])')
+        star_rating = info.xpath('//li/div/h2/img[@class="rating"]/@src').re(r'([0-9-]+\.[0-9])')
         users_rating = info.xpath('.//strong[@class="review_score"]/text()').re(r'([0-9-].[0-9-])')
         lowest_price = []
         if ivivu_search['iso_currency_code'] == 'VND':
@@ -70,12 +72,29 @@ class IvivuSpider(HotelSpider):
                 lowest_price.append(int(price))
             except:
                 pass
-        print users_rating
-        print currency
-        print list_price
+#        print "star name==",name
+#        print "star href==",href
+#        print "star address==",address
+#        print "star users_rating==",users_rating
+#        print "star rating==",star_rating
+#        print currency
+        print "price==",lowest_price
         for url in href[0:1]:
             yield Request(url=url, callback=self.hotel_detail)
 
+        area = ['' for x in name]
+        
+#        Get location city of hotel
+        location = sel.xpath('//span[@itemprop="offerCount"]/text()').extract()
+#        print "\n location===",location
+        location = len(location) and location[0].replace('hotels in','')
+        location = re.sub('[(1-9]', '', location).strip()   
+#        print "\n location===",location
+        
+        location_obj = self.create_location(location)
+        self.create_hotel('ivivu.com', name, href, location_obj, star_rating, users_rating, currency, lowest_price, address,
+                          area)
+        
         print '\n NEXT PAGE--------'
         if not name:
             print 'Complete ----------'
@@ -87,7 +106,7 @@ class IvivuSpider(HotelSpider):
 
     def get_detail(self, response):
         """
-
+        Response:: Room Info
         @param response:
         """
         sel = Selector(response)
@@ -98,6 +117,8 @@ class IvivuSpider(HotelSpider):
         print 'PRICE -------------------', price
         number_of_people = rooms.xpath('.//td[@valign="middle"][@class="col_2"]')
         print number_of_people
+        
+        self.create_room(hotel_name, room_name, number_of_people, price)
 
     def hotel_detail(self, response):
         """
@@ -105,10 +126,29 @@ class IvivuSpider(HotelSpider):
         @param response:
         """
         sel = Selector(response)
+#        from scrapy.shell import inspect_response
+#        inspect_response(response, self)
         img = sel.xpath('//div[@class="contents_new_box"]/ul/li/a[@class="hover_bg_inset"]/@href').extract()
         print 'IMAGE ----------', img
         ivivu_detail['hotelId'] = response.url.split('/')[-2].split('-')[-1]
         print ivivu_detail
-
+        
+        description =  sel.xpath('//div[@class="new_box"]/div/div').extract()[2]
+        if '<div' in description:
+            description = description[ description.index('>')+1:]
+            description = description.replace('</div>','').replace('\r\n','').replace('<br>','').strip()
+        
+        service_data = sel.xpath('//ul[contains(@class,"facilities")]/li/text()').extract()
+        service = self.get_hotel_service(service_data)
+        
+        hotel_name = sel.xpath('//h1[@id="hotelName"]/text()').extract()[0]
+        hotel_name = hotel_name.encode('ascii', 'ignore').strip()
+        print "\n description===",description
+        print "\n service==",service
+        print "\n hotel name==",hotel_name
+        self.update_hotel(hotel_name, description, service)
+        for image in img:
+            self.create_image(hotel_name, image, False)
+        
         yield Request(url='http://www.ivivu.com/request.php?' + urllib.urlencode(ivivu_detail),
                       callback=self.get_detail)

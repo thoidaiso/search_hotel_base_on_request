@@ -60,8 +60,8 @@ def get_result(request):
 #    print "\n request check in==",request.GET.get('check_in')
     now = timezone.now()
     location = request.GET.get('search_name')
-    if location:
-        request.session['filter'] = {}
+#    if location:
+#        request.session['filter'] = {}
 #    location = re.sub('[-., ]+', '', location)
     #TODO:
 #        Get real location like hochiminh if input 'ho chi minh city'
@@ -121,10 +121,22 @@ def get_result(request):
         hotel_data = Hotel.objects.filter(location = location_obj)
         
     else:
-        print "\n\n\n Show page to choose correct location"
+        print "\n\n\n Show page to choose correct location:",location 
+        location = re.sub('[-.,_/\| ]+', '', location)
+        location = location.lower()
+        location = location.replace('city','')
+        location_obj = Location.objects.filter(short_name__icontains = location)
+        if location_obj:
+            hotel_data = Hotel.objects.filter(location = location_obj[0])
+        else:
+            location_objs = Location.objects.all()
+            return render(request, 'hotel/location_list.html', {'locations': location_objs, 'name': request.GET.get('search_name')})
+            
         #TODO: Need to show page to choose correct location
         
-        call_spider(HotelSpider, location, check_in, check_out)
+        
+        
+#        call_spider(HotelSpider, location, check_in, check_out)
     
 #    TODO: Remove this block
 #    Get user_request id

@@ -31,7 +31,7 @@ def get_hotel_lowest_price(hotel_obj, from_date):
     
     print "price_books",price_books
     if not price_books:
-        return 'NA'
+        return 'N/A'
     return price_books[0].price
 
 @register.filter
@@ -50,7 +50,10 @@ def get_hotel_main_image(hotel_obj):
     if not image:
         image = Image_Hotel.objects.filter(hotel=hotel_obj)
         print "\n aaimage==",image
-        return image[0].src
+        if image:
+            return image[0].src
+        else:
+            return ''
     
     return image[0].src
 

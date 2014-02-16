@@ -1,0 +1,47 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hotel Scraper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Jquery UI -->
+    <link rel="stylesheet" href="{% static 'jquery-ui-1.10.3/themes/base/jquery.ui.all.css' %}">
+	<script src="{% static 'jquery-ui-1.10.3/jquery-1.9.1.js' %}"></script>
+	<script src="{% static 'jquery-ui-1.10.3/ui/jquery.ui.core.js' %}"></script>
+	<script src="{% static 'jquery-ui-1.10.3/ui/jquery.ui.widget.js' %}"></script>
+	<script src="{% static 'jquery-ui-1.10.3/ui/jquery.ui.datepicker.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'jquery-ui-1.10.3/demos/demos.css' %}">
+
+    <!-- Bootstrap -->
+    <link href="{% static 'bootstrap-3.0.3/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+     <link href="{% static 'css/location_list.css' %}" rel="stylesheet">
+	 
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-1.10.2.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.0.3/dist/js/bootstrap.min.js' %}"></script>
+    
+    <script src="{% static 'js/location_list.js' %}"></script>
+    
+  </head>
+  <body>
+    	<div class="search_match">
+    		<span class="search_match_span">You search for 
+    			<strong class="search_key"> {{name|truncatechars:20}}</strong>
+    			 matched the following location...</span>
+    	</div>
+    	<div class="location_list_wrap">
+    		{%for location in locations%}
+    			<div class="location_detail_wrap">
+    				<a href="javascript:gotoResultPage('{{location.name}}', '{{request.path}}', '{{request.GET.urlencode}}')" >
+    					<div class="location_name">
+    						<span class="location_name_span">{{location.name}}</span>
+    					</div>
+    				</a>
+    			</div>
+    		
+    		{%endfor%}
+    	</div>
+  </body>
+</html>

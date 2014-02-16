@@ -4,7 +4,7 @@ from scrapy.spider import BaseSpider
 from scrapy import log
 from datetime import datetime, timedelta
 from hotel.models import Hotel, Hotel_Domain, Location, Room, Price_Book, Image_Hotel
-
+import re
 
 class HotelSpider(BaseSpider):
     def __init__(self, args={}, from_date=datetime.now() + timedelta(days=1),
@@ -37,24 +37,26 @@ class HotelSpider(BaseSpider):
         
         
     def get_hotel_service(self, service_data):
-        dict = { 'Wi': False, 
+        dict = { 'wi': False, 
                 'airport': False, 
                 'bar': False, 
                 'business': False,
                 'restaurant': False,
                 'spa': False,
+                'sauna': False,
                 'park': False,
                 'fitness': False,
                 'smok': False,
                 'baby': False
                 }
         
-        name_dict = {'Wi': 'Internet',
+        name_dict = {'wi': 'Internet',
                      'airport': 'Airport Transfer',
                      'bar': 'Bar',
                      'business': 'Business Center',
                      'restaurant': 'Restaurant',
                      'spa': 'Spa',
+                     'sauna': 'Spa',
                      'park': "Parking",
                      'fitness': 'Fitness Center',
                      'smok': 'Smoke Area',
@@ -64,7 +66,7 @@ class HotelSpider(BaseSpider):
         
         for data in service_data:
             for key in dict.keys():
-                if key in data:
+                if key in data.lower():
                     dict[key] = True
         
         for key in dict.keys():
@@ -121,18 +123,20 @@ class HotelSpider(BaseSpider):
         log.msg("len name ...." + str(len(name)), level=log.INFO)
         print star_rating
         for pos in range(0, len(name)):
-            log.msg("name ...." + str(pos), level=log.INFO)
+            log.msg("name ...." + name[pos], level=log.INFO)
             obj, created = Hotel_Domain.objects.get_or_create(name=spider_name, priority=1)
-            Hotel.objects.get_or_create(hotel_domain=obj,
+            obj, created = Hotel.objects.get_or_create(hotel_domain=obj,
                                         src=href[pos],
-                                        name=name[pos],
+                                        name=name[pos].strip(),
                                         location=location_obj,
                                         currency=currency[pos],
-                                        lowest_price=lowest_price[pos],
-                                        user_rating=float(users_rating[pos]),
                                         address=address[pos],
                                         area=area[pos],
-                                        defaults={'star_rating': star_rating[pos]})
+                                        defaults={'star_rating': int(float( star_rating[pos] )),
+                                                  'user_rating': float(users_rating[pos]),
+                                                  'lowest_price': lowest_price[pos],
+                                                  })
+#            print "\n create =",obj.id
 
     def update_hotel(self, hotel_name, description, service):
         if description and service:
@@ -151,16 +155,13 @@ class HotelSpider(BaseSpider):
         
     def create_location(self, location):
         short_name = re.sub(' ', '', location)
-        object, create = Location.objects.get_or_create(name=location,
+        location_object = Location.objects.filter(name__icontains=location)
+        if not location_object:
+            object, create = Location.objects.get_or_create(name=location,
                                                         short_name=short_name)
-        return object
+            return object
+        else:
+            return location_object[0]
+       
 
 
-    def create_location(self, location):
-        """
-
-        @param location:
-        @return:
-        """
-        object, create = Location.objects.get_or_create(name=location)
-        return object
