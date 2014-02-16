@@ -143,22 +143,15 @@ post_data_search_base_on_location = {
 }
 
 ivivu_search = {
-    "sbk_date_from": "12-02-2014",
-    "sbk_date_to": "13-02-2014",
-    "sbk_href": "en/hotels/chau-a/viet-nam/tp-ho-chi-minh-sai-gon/all/1162/",
-    "sbk_n_nights": "1",
-    "sbk_q": "Ho Chi Minh City"
-}
-ivivu_search = {
-    "cacheBug": "yqBCgfgZ",
+    "cacheBug": "3JBWHWi0",
     "cityid": "1162",
     "countryid": "VN",
-    "datefrom": "2014-02-14",
+    "datefrom": "2014-02-15",
     "filters": "",
     "finderhotel": "",
     "hotelIds": "",
     "iso_currency_code": "USD",
-    "keycache": "2ec3c6bff96619bf9c054fc416f3b55f",
+    "keycache": "e7032d3d7d3996dfe3e81ac55b9708fe",
     "kindofpromotion": "",
     "maxprice": "0",
     "method": "searchbooking",
@@ -174,11 +167,12 @@ ivivu_search = {
 }
 
 ivivu_detail = {
-    "cacheBug": "uIeNkTaw",
-    "datefrom": "2014-02-14",
-    "hotelId": "W482136",
+    "cacheBug": "oCrJAh5r",
+    "date_from": "15-02-2014",
+    "date_to": "16-02-2014",
+    "hotelId": "W326476",
     "iso_currency_code": "USD",
     "method": "hoteldetail",
     "search": "true",
-    "task": "jumpdatefrom"
+    "task": "jumpdatefrom_v4"
 }

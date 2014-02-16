@@ -5,7 +5,7 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
-from hotel.models import  Hotel, Location
+from hotel.models import Hotel, Location
 from multiprocessing.queues import Queue
 from scraper.scraper.spiders.hotel_spider import HotelSpider
 from ConnectorToScrapy import ConnectorToScrapy
