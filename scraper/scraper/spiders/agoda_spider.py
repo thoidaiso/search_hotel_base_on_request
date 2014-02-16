@@ -199,16 +199,15 @@ class AgodaSpider(HotelSpider):
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 
-        log.msg("NEXT PAGE", level=log.INFO)
-        VIEWSTATE = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
-        next_page_data['__VIEWSTATE'] = VIEWSTATE
-        next_page_datax = urllib.urlencode(next_page_data)
+        if name:
+            log.msg("NEXT PAGE", level=log.INFO)
+            next_page_datax = urllib.urlencode(next_page_data)
 
-        yield Request(url=response.url, method='POST',
-                      body=next_page_datax, callback=self.after_search,
-                      headers={"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                               "Accept-Encoding": "gzip,deflate,sdch",
-                               "Accept-Language": "vi,en-US;q=0.8,en;q=0.6",
-                               "Cache-Control": "max-age=0",
-                               "Connection": "keep-alive",
-                               "Content-Type": "application/x-www-form-urlencoded"})
+            yield Request(url=response.url, method='POST',
+                          body=next_page_datax, callback=self.after_search,
+                          headers={"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                                   "Accept-Encoding": "gzip,deflate,sdch",
+                                   "Accept-Language": "vi,en-US;q=0.8,en;q=0.6",
+                                   "Cache-Control": "max-age=0",
+                                   "Connection": "keep-alive",
+                                   "Content-Type": "application/x-www-form-urlencoded"})
