@@ -6,7 +6,7 @@ from scrapy.http import FormRequest, Request
 from scrapy import log
 from post_data import *
 from datetime import datetime, timedelta
-from hotel.models import Hotel, Hotel_Domain, Location, Room, Price_Book
+from hotel.models import Hotel, Hotel_Domain, Location, Room, Price_Book, Image_Hotel
 import urllib
 from random import randint
 import re
@@ -115,26 +115,102 @@ class HotelSpider(BaseSpider):
         
         price = room.xpath(
             './/td[contains(@class,"tex_center gray_r sgrayu row_padding_")]/div/span[2]/text()').extract()
-        
         price = [x for x in price if price.index(x)%2 ==1]
+        
+        service = ""
+        service_data = sel.xpath('//div[@class="content_facility"]/table/tr/td').extract()
+        service_data = [x for x in service_data if service_data.index(x)%2 ==1]
+        service = self.get_hotel_service(service_data)
+        
 #        from scrapy.shell import inspect_response
 #        inspect_response(response, self)
+        
+        hotel_main_image = sel.xpath('//div[@class="hotel_photos"]/img').extract()
+        if hotel_main_image:
+            hotel_main_image = hotel_main_image[0]
+            first = hotel_main_image.index('"') + 1
+            second = first +  hotel_main_image[first:].index('"')
+            hotel_main_image = hotel_main_image[first: second]
+        
+        hotel_image_arr = []
+        hotel_images = sel.xpath('//div[starts-with(@id,"ctl00_ctl00_MainContent_ContentMain_ThumbPhotos")]/table/tr/td').extract()
+        for hotel_image in hotel_images:
+            if 'src' in hotel_image:
+                first = hotel_image.index('src') +5
+                second = first +  hotel_image[first:].index('"')
+                hotel_image_arr.append(hotel_image[first:second])
+                self.create_image(hotel_name, hotel_main_image, True)
+        
+        
         log.msg('file==='+'detail' + str(ran), level=log.INFO)
 #        log.msg('====number_of_rooms========='+number_of_rooms[0], level=log.INFO)
         log.msg('====hotel_name========='+hotel_name, level=log.INFO)
-        log.msg('====room_name========='+room_name[0], level=log.INFO)
-        log.msg('======number_of_people======='+ number_of_people[0], level=log.INFO)
-        log.msg('======price======='+price[0], level=log.INFO)
+#        log.msg('====room_name========='+room_name[0], level=log.INFO)
+#        log.msg('======number_of_people======='+ number_of_people[0], level=log.INFO)
+#        log.msg('======price======='+price[0], level=log.INFO)
         log.msg("======description======="+ description[0], level=log.INFO)
         
-        self.update_hotel(hotel_name, description[0])
+        self.update_hotel(hotel_name, description[0], service)
         self.create_room(hotel_name, room_name, number_of_people, price)
         
+        for image in hotel_image_arr:
+            self.create_image(hotel_name, image, False)
+    
+    def create_image(self, hotel_name, image, main=False):
+        if image and hotel_name:
+            hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
+            Image_Hotel.objects.get_or_create(hotel=hotel_obj,
+                                              src=image,
+                                              main=main
+                                              )
+        
+        
+    def get_hotel_service(self, service_data):
+        dict = { 'Wi': False, 
+                'airport': False, 
+                'bar': False, 
+                'business': False,
+                'restaurant': False,
+                'spa': False,
+                'park': False,
+                'fitness': False,
+                'smok': False,
+                'baby': False
+                }
+        
+        name_dict = {'Wi': 'Internet',
+                     'airport': 'Airport Transfer',
+                     'bar': 'Bar',
+                     'business': 'Business Center',
+                     'restaurant': 'Restaurant',
+                     'spa': 'Spa',
+                     'park': "Parking",
+                     'fitness': 'Fitness Center',
+                     'smok': 'Smoke Area',
+                     'baby': 'Babysitting'
+                     }
+        service = ""
+        
+        for data in service_data:
+            for key in dict.keys():
+                if key in data:
+                    dict[key] = True
+        
+        for key in dict.keys():
+            if dict[key]:
+                service += "\r\n" + name_dict[key]
+        
+        print "\n service=====",service
+        
+        return service
+                
+            
+            
     def create_room(self, hotel_name, room_name, number_of_people, price):
         log.msg("create room for"+ hotel_name, level=log.INFO)
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
         hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
-        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
+#        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
         for pos in range(0, len(room_name)):
             log.msg("name ...." + room_name[pos], level=log.INFO)
             room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
@@ -147,12 +223,16 @@ class HotelSpider(BaseSpider):
     def create_price_book_period(self, hotel_obj, room_obj, price):
         log.msg("create price infog"+price, level=log.INFO)
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
-        Price_Book.objects.get_or_create(hotel = hotel_obj,
+        obj, created = Price_Book.objects.get_or_create(hotel = hotel_obj,
                                         room = room_obj,
                                         hotel_domain = hotel_domain_obj,
                                         date_start = self.date_start,
                                         date_end = self.date_end,
-                                        price = float(price))
+                                        defaults={'price': float(price)}
+                                        )
+        if not created and obj.price > float(price):
+            Price_Book.objects.filter(pk=obj.id).update(price = float(price))
+            
 
     def create_hotel(self, name, href, location_obj, star_rating, users_rating, currency, lowest_price, address, area):
         
@@ -180,12 +260,19 @@ class HotelSpider(BaseSpider):
         
         log.msg("end len name ...." + str(len(name)), level=log.INFO)
 
-    def update_hotel(self, hotel_name, description):
-        if description:
-            log.msg("update description for hotel=="+ description)
+    def update_hotel(self, hotel_name, description, service):
+        if description and service:
+#            log.msg("update description for hotel=="+ description+ ";;;"+ str(len(description)))
             log.msg("hotel_name for hotel=="+ hotel_name)
-            obj = Hotel.objects.filter(name=hotel_name).update(description = description)
-    
+            hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
+            print "\hotel obj===",hotel_obj
+            print "\desccchotel obj===",hotel_obj.description
+            if hotel_obj:
+                if (hotel_obj.description and len(description)> len(hotel_obj.description)) or not hotel_obj.description:
+                    print "\update decripition===",hotel_obj
+                    Hotel.objects.filter(pk=hotel_obj.id).update(description = description)
+            
+                Hotel.objects.filter(pk=hotel_obj.id).update(service = service)
     
         
     def create_location(self, location):
@@ -199,7 +286,7 @@ class HotelSpider(BaseSpider):
 
         ran = randint(2, 10)  #Inclusive
         filename = response.url.split("/")[-2] + str(ran)
-        open(filename + '.html', 'wb').write(response.body)
+#        open(filename + '.html', 'wb').write(response.body)
         
         log.msg("After Search ...."+ filename, level=log.INFO)
         sel = Selector(response)

@@ -298,6 +298,7 @@ def filter_hotel(type_filter, filter_content, hotel_data):
             hotel_data = hotel_data.filter( area = filter_content)
         
         elif type_filter == 'service':
+            print "\n filterconteot==",filter_content
             hotel_data = hotel_data.filter( service__icontains = filter_content)
     
     print "\n return hotel==",hotel_data

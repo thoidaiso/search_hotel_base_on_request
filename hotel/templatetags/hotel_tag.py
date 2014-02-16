@@ -1,4 +1,4 @@
-from hotel.models import Price_Book, Hotel
+from hotel.models import Price_Book, Hotel, Image_Hotel
 from datetime import datetime
 from django import template
 register = template.Library()
@@ -34,5 +34,27 @@ def get_hotel_lowest_price(hotel_obj, from_date):
         return 'NA'
     return price_books[0].price
 
+@register.filter
+def separate_hotel_service(service):
+    service_arr = service.split('\r\n')
+    service_arr = [x for x in service_arr if x]
+    return service_arr
+    
 
+    
+@register.filter
+def get_hotel_main_image(hotel_obj):
+    print "\n get main image",hotel_obj.id
+    image = Image_Hotel.objects.filter(hotel=hotel_obj, main=True)
+    print "\n image==",image
+    if not image:
+        image = Image_Hotel.objects.filter(hotel=hotel_obj)
+        print "\n aaimage==",image
+        return image[0].src
+    
+    return image[0].src
 
+@register.filter
+def get_book_link(hotel_obj):
+    return "http://agoda.com" +hotel_obj.src
+    

@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div id="popup_hotel_booking">
-				<button class="btn_book">Book</button>
+				<button class="btn_book"><a href="{{hotel|get_book_link }}">Book</a></button>
 			</div>
 		</div>
 	</div>
@@ -49,10 +49,20 @@
 					<div id="popup_hotel_description">
 						<span class="popup_content_heading">Hotel Description</span>
 						<span class="popup_span_hotel_description">{{hotel.description}}</span>
+						
 					</div>
 					<div id="popup_hotel_service">
 						<span class="popup_content_heading">Service</span>
-						<span class="popup_span_hotel_description">{{hotel.service}}</span>
+						<div class="popup_service_content">
+							{% for service in hotel.service|separate_hotel_service%}
+								<div class="col-lg-3 col-md-4 col-xs-6 popup_service_content_wrap">
+									<span class="popup_service_content_span">{{service}}</span>
+								</div>
+							{%endfor%}
+							
+						</div>
+						
+						
 					</div>
 				</div>
 			</div>

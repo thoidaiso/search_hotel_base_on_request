@@ -50,7 +50,7 @@ class Hotel_Domain(models.Model):
 class Hotel(models.Model):
 #    user_request = models.ForeignKey(Users_Request, null=True, blank=True)
     hotel_domain = models.ForeignKey(Hotel_Domain, null=True, blank=True)
-    order_in_page = models.SmallIntegerField(null=True, blank=True)
+#    order_in_page = models.SmallIntegerField(null=True, blank=True)
     name = models.CharField(max_length=100)
     location = models.ForeignKey(Location, null=True, blank=True) #location of hotel like hochiminh---this field link to location
     address = models.CharField(max_length=200) #full address, number of house, street, city
@@ -59,7 +59,7 @@ class Hotel(models.Model):
     star_rating = models.SmallIntegerField(max_length=1, choices=rating, null=True, blank=True)
     user_rating = models.FloatField(null=True, blank=True)
     lowest_price = models.SmallIntegerField(null=True, blank=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(null=True, blank=True)
     src = models.URLField(max_length=200)
     service = models.TextField(blank=True)
     currency = models.CharField(max_length=4, null=True, blank=True)
@@ -94,7 +94,8 @@ class Price_Book(models.Model):
 class Image_Hotel(models.Model):
     hotel = models.ForeignKey(Hotel, null=True, blank=True)
     room = models.ForeignKey(Room, null=True, blank=True)
-    src = models.URLField(max_length=200)
+    src = models.CharField(max_length=200)
+    main = models.BooleanField() #main image
     
 
     
