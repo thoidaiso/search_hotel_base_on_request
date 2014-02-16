@@ -95,10 +95,8 @@ class IvivuSpider(HotelSpider):
         self.create_hotel('ivivu.com', name, href, location_obj, star_rating, users_rating, currency, lowest_price, address,
                           area, 2)
         
-        print '\n NEXT PAGE--------'
-        if not name:
-            print 'Complete ----------'
-            return
+        print '\n NEXT PAGE--------', self.page
+        if name:
             self.page += 1
             ivivu_search['page'] = self.page
             yield Request(url='http://www.ivivu.com/request.php?' + urllib.urlencode(ivivu_search),
