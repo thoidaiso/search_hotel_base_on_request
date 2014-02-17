@@ -59,5 +59,7 @@ def get_hotel_main_image(hotel_obj):
 
 @register.filter
 def get_book_link(hotel_obj):
+    if 'http' in hotel_obj.src:
+        return  hotel_obj.src
     return "http://agoda.com" +hotel_obj.src
     

@@ -5,7 +5,7 @@ from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
-from hotel.models import Hotel, Location
+from hotel.models import Hotel, Location, Price_Book
 from multiprocessing.queues import Queue
 from scraper.scraper.spiders.hotel_spider import HotelSpider
 from ConnectorToScrapy import ConnectorToScrapy
@@ -13,7 +13,6 @@ from datetime import datetime
 from django.utils import timezone
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from templatetags import hotel_tag
 
 
 class IndexView(generic.ListView):
@@ -238,23 +237,25 @@ def call_spider(Spider, location, check_in, check_out):
 #FILTER TO GET BEST HOTEL INFO IF HAVE 2 RECORD FOR SAME HOTEL BY 2 DOMAIN
 #AT THE MOMENT ONLY CHOOSE HOTEL WHICH HAVE LOWER PRICE THAN
 def filter_duplicate_hotel(hotel_data, check_in):
+    print "\n filter======="
     remove_index_hotel_data = []
     for i in range(0, len(hotel_data)-1):
-        for j in range(i+1, len(hote_data)):
-            if hotel_data[i].name ==hotel_data[i].name:
+        for j in range(i+1, len(hotel_data)):
+            if hotel_data[i].name ==hotel_data[j].name:
                 #Start to validate to choose best hotel
-                if get_hotel_lowest_price(hotel_data[i], check_in) > get_hotel_lowest_price(hotel_data[j], check_in):
+                if hotel_data[i].lowest_price > hotel_data[j].lowest_price:
                     remove_index_hotel_data.append(j)
                 else:
                     remove_index_hotel_data.append(i)
     
+    return_hotel_data = []
     if remove_index_hotel_data:
-        remove_index_hotel_data.sort(reverse=True)
-        for index in remove_index_hotel_data:
-            hotel_data.pop(index)
+        for i in range(0, len(hotel_data)):
+            if i not in remove_index_hotel_data:
+                return_hotel_data.append(hotel_data[i])
     
-    return hotel_data
-    
+    return return_hotel_data
+
                        
 
 

@@ -79,7 +79,7 @@ class IvivuSpider(HotelSpider):
 #        print "star rating==",star_rating
 #        print currency
         print "price==",lowest_price
-        for url in href[0:1]:
+        for url in href:
             yield Request(url=url, callback=self.hotel_detail)
 
         area = ['' for x in name]
@@ -134,7 +134,7 @@ class IvivuSpider(HotelSpider):
 #        from scrapy.shell import inspect_response
 #        inspect_response(response, self)
         img = sel.xpath('//div[@class="contents_new_box"]/ul/li/a[@class="hover_bg_inset"]/@href').extract()
-        print 'IMAGE ----------', img
+#        print '\n\nIMAGE ----------', img
         ivivu_detail['hotelId'] = response.url.split('/')[-2].split('-')[-1]
         print ivivu_detail
         
@@ -149,8 +149,8 @@ class IvivuSpider(HotelSpider):
         hotel_name = sel.xpath('//h1[@id="hotelName"]/text()').extract()[0]
         hotel_name = hotel_name.encode('ascii', 'ignore').strip()
         print "\n description===",description
-        print "\n service==",service
-        print "\n hotel name==",hotel_name
+#        print "\n service==",service
+#        print "\n hotel name==",hotel_name
         self.update_hotel(hotel_name, description, service)
         for image in img:
             self.create_image(hotel_name, image, False)

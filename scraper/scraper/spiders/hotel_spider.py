@@ -29,11 +29,15 @@ class HotelSpider(BaseSpider):
 
     def create_image(self, hotel_name, image, main=False):
         if image and hotel_name:
-            hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
-            Image_Hotel.objects.get_or_create(hotel=hotel_obj,
-                                              src=image,
-                                              main=main
-            )
+#            print "\n create image==",image,';;name==',hotel_name
+            hotel_obj = Hotel.objects.filter(name=hotel_name)
+            if hotel_obj:
+                object, created= Image_Hotel.objects.get_or_create(hotel=hotel_obj[0],
+                                                  src=image,
+                                                  main=main
+                                                    )
+#                if object:
+#                    print "created ===",object.id
 
 
     def get_hotel_service(self, service_data):
@@ -81,16 +85,17 @@ class HotelSpider(BaseSpider):
     def create_room(self, hotel_name, room_name, number_of_people, price):
         log.msg("create room for" + hotel_name, level=log.INFO)
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
-        hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
+        hotel_obj = Hotel.objects.filter(name=hotel_name)
 #        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
-        if len(room_name) == len(number_of_people) == len(price):
+        if len(room_name) == len(number_of_people) == len(price) and hotel_obj:
+            hotel_obj = hotel_obj[0]
             for pos in range(0, len(room_name)):
                 log.msg("name ...." + room_name[pos], level=log.INFO)
                 log.msg("number_of_people ...." + number_of_people[pos], level=log.INFO)
                 room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
                                            name = room_name[pos],
                                            number_of_people = number_of_people[pos])
-                log.msg("price:"+ price and price[0] or 0, level=log.INFO)
+#                log.msg("price:"+ price and price[0] or 0, level=log.INFO)
                 self.create_price_book_period(hotel_obj, room_obj, price[pos])
     
     
@@ -146,10 +151,11 @@ class HotelSpider(BaseSpider):
         if description and service:
         #            log.msg("update description for hotel=="+ description+ ";;;"+ str(len(description)))
             log.msg("hotel_name for hotel==" + hotel_name)
-            hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
+            hotel_obj = Hotel.objects.filter(name=hotel_name)
             print "\hotel obj===", hotel_obj
-            print "\desccchotel obj===", hotel_obj.description
+#            print "\desccchotel obj===", hotel_obj.description
             if hotel_obj:
+                hotel_obj = hotel_obj[0]
                 if (hotel_obj.description and len(description) > len(
                         hotel_obj.description)) or not hotel_obj.description:
                     print "\update decripition===", hotel_obj
