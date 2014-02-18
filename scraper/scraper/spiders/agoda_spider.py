@@ -2,7 +2,6 @@
 __author__ = 'sepdau'
 
 import urllib
-import random
 
 from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
@@ -68,9 +67,7 @@ class AgodaSpider(HotelSpider):
 
     def hotel_detail(self, response):
         log.msg("hotel detail", level=log.INFO)
-        ran = random.randint(2, 10)  #Inclusive
-        filename = 'detail' + str(ran)
-        open(filename + '.html', 'wb').write(response.body)
+
         sel = Selector(response)
         hotel_name = sel.xpath(
             '//span[@id="ctl00_ctl00_MainContent_ContentMain_HotelHeaderHD_lblHotelName"]/text()').extract()
@@ -149,12 +146,12 @@ class AgodaSpider(HotelSpider):
         if location:
             location = location[0]
             location = re.sub('[\r\n\t]', '', location)
-            location = location[:-7] #delete ' Hotels' at the end of the string location
+            location = location[:-7]  # delete ' Hotels' at the end of the string location
         else:
             location = ''
         location_obj = self.create_location(location)
 
-        #        Get the rating of hotel, some hotel dont have user rating. So boring
+        # Get the rating of hotel, some hotel dont have user rating. So boring
         users_rating = []
         for pos in range(1, len(name) + 1):
             startIDofA = "ctl00_ContentMain_CitySearchResult_v2_rptSearchResults_ctl"
@@ -193,9 +190,9 @@ class AgodaSpider(HotelSpider):
             yield Request(url=response.url, method='POST',
                           body=next_page_datax, callback=self.after_search,
                           headers={
-                          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                          "Accept-Encoding": "gzip,deflate,sdch",
-                          "Accept-Language": "vi,en-US;q=0.8,en;q=0.6",
-                          "Cache-Control": "max-age=0",
-                          "Connection": "keep-alive",
-                          "Content-Type": "application/x-www-form-urlencoded"})
+                              "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                              "Accept-Encoding": "gzip,deflate,sdch",
+                              "Accept-Language": "vi,en-US;q=0.8,en;q=0.6",
+                              "Cache-Control": "max-age=0",
+                              "Connection": "keep-alive",
+                              "Content-Type": "application/x-www-form-urlencoded"})
