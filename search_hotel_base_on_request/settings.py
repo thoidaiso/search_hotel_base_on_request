@@ -76,9 +76,9 @@ WSGI_APPLICATION = 'search_hotel_base_on_request.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'hotel3',                      # Or path to database file if using sqlite3.
-        'USER': 'openerp',                      # Not used with sqlite3.
-        'PASSWORD': 'openerp',                  # Not used with sqlite3.
+        'NAME': 'scraper',                      # Or path to database file if using sqlite3.
+        'USER': 'scraper',                      # Not used with sqlite3.
+        'PASSWORD': 'password',                  # Not used with sqlite3.
         'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
