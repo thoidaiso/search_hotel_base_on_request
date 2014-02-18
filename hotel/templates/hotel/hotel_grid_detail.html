@@ -7,10 +7,10 @@
      <script src="{% static 'js/popup.js' %}"></script>
 	<div id="result_view_count">
 					<!-- Line info about result -->
-		
+
 		<div id="result_count">
 			<span class="hotel_display_count">{{data|length}} of {{count_hotel}} hotels</span>
-			<span class="hotel_display_location">in Ho Chi Minh city</span>
+
 		</div>
 	</div>
 	<!-- Grid hotel details -->
@@ -31,7 +31,7 @@
 						</div>
 						<div>
 							<div class="hotel_star hotel_{{hotel.star_rating}}star">
-						</div> 
+						</div>
 						</div>
 						<div class="hotel_detail_location_wrapper">
 							<span class="hotel_detail_location">
@@ -41,14 +41,14 @@
 					</div>
 					<div class="hotel_price_rating">
 						<div class="hotel_price_wrapper">
-							<span class="hotel_detail_price">{{ hotel.lowest_price  }}</span>
+							<span class="hotel_detail_price">{{ hotel|get_hotel_lowest_price:request.GET.check_in  }}</span>
 							<span class="hotel_detail_currency">{{hotel.currency}}</span>
 						</div>
 						<div class="hotel_detail_rating_wrapper">
 							<span class="hotel_detail_rating_with">with</span>
 							<div class="hotel_detail_rating">
 								<span class="hotel_detail_rating">{{hotel.user_rating}}</span>
-								<div class="rating_symbol"></div>	
+								<div class="rating_symbol"></div>
 							</div>
 						</div>
 					</div>
@@ -56,22 +56,22 @@
 			    </div>
 			</div>
 			{% endfor %}
-			
+
 		</div>
 	</div>
 	<!--Paging start -->
 	<div class="pagination">
 	    <span class="step-links">
-	    	
+
 	        {% if data.has_previous %}
 	        	<b><a href="javascript:changeResultPage('{{request.path}}?{{ request.GET.urlencode }}',  {{data.previous_page_number}}, '{{ csrf_token }}' )">previous</a></b>
 	            <!-- <b><a href="?{{ request.GET.urlencode }}&page={{ data.previous_page_number }}">previous</a></b> -->
 	        {% endif %}
-	
+
 	        <span class="current">
 	            (Page {{ data.number }} of {{ data.paginator.num_pages }}.)
 	        </span>
-	
+
 	        {% if data.has_next %}
 	        	<b><a href="javascript:changeResultPage('{{request.path}}?{{ request.GET.urlencode }}',  {{data.next_page_number}}, '{{ csrf_token }}' )">next</a></b>
 	            <!-- <b><a href="?{{ request.GET.urlencode }}&page={{ data.next_page_number }}">next</a></b> -->
@@ -81,4 +81,4 @@
 	<!--Paging end -->
 
 
-		
+

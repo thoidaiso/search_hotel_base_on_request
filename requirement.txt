@@ -1,4 +1,4 @@
-django=1.6.1
+Django==1.6.1
 scrapy=0.20.2
 psycopg2
 django-admin-bootstrapped
