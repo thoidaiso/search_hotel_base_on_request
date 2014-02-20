@@ -11,7 +11,9 @@ SPIDER_MIDDLEWARES = {
 # Delay download
 DOWNLOAD_DELAY = 1
 DUPEFILTER_CLASS = 'scrapy.dupefilter.BaseDupeFilter'
-
+CONCURRENT_REQUESTS = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
+RANDOM_DOWNLOAD_DELAY = False
 import sys
 import os
 

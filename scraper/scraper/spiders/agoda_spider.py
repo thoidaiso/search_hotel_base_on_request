@@ -27,6 +27,10 @@ class AgodaSpider(HotelSpider):
     allowed_domains = ["agoda.com"]
     start_urls = [
         "http://www.agoda.com/city/ho-chi-minh-city-vn.html",
+        "http://www.agoda.com/city/phan-thiet-vn.html",
+        "http://www.agoda.com/city/tokyo-jp.html",
+        "http://www.agoda.com/city/singapore-sg.html",
+        "http://www.agoda.com/city/bangkok-th.html",    
     ]
 
     def parse(self, response):
@@ -124,7 +128,12 @@ class AgodaSpider(HotelSpider):
 
         @param response:
         """
-        log.msg("After Search ....", level=log.INFO)
+        # import random
+        #
+        # ran = random.randint(0, 100)  #Inclusive
+        # filename = 'PAGE' + str(ran)
+        # open(filename + '.html', 'wb').write(response.body)
+        # log.msg("After Search ...." + filename, level=log.INFO)
         sel = Selector(response)
         info = sel.xpath(hotel_info_path['hotel_info_tag'])
         name = info.xpath('.//a[@class="hot_name"]/text()').extract()
@@ -142,14 +151,9 @@ class AgodaSpider(HotelSpider):
             except:
                 pass
 
-        location = sel.xpath('//*[@id="ctl00_head1"]/title/text()').extract()
-        if location:
-            location = location[0]
-            location = re.sub('[\r\n\t]', '', location)
-            location = location[:-7]  # delete ' Hotels' at the end of the string location
-        else:
-            location = ''
-        location_obj = self.create_location(location)
+        location = sel.xpath('//*[@id="pHeadertext"]/span[@class="blue ssr_search_text"][2]/text()').extract() or ''
+        print 'Location -------------', location
+        location_obj = self.create_location(location and location[0] or '')
 
         # Get the rating of hotel, some hotel dont have user rating. So boring
         users_rating = []
@@ -181,10 +185,18 @@ class AgodaSpider(HotelSpider):
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 
-        if name:
-            log.msg("NEXT PAGE", level=log.INFO)
-            view_state = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
-            post_data_search_base_on_location['__VIEWSTATE'] = view_state and view_state[0] or ''
+        log.msg("NEXT PAGE", level=log.INFO)
+        view_state = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
+        if location and name:
+            if view_state:
+                next_page_data['__VIEWSTATE'] = view_state[0]
+            else:
+                view_state = sel.xpath('//body/text()').re(r'\b__VIEWSTATE.*\|1\b')
+                if view_state:
+                    view_state = view_state[0].split('|')[1]
+                    next_page_data['__VIEWSTATE'] = view_state
+            next_page_data['ctl00$ContentMain$DestinationSearchBox1$TextSearch1$txtSearch'] = location and location[
+                0] or ''
             next_page_datax = urllib.urlencode(next_page_data)
 
             yield Request(url=response.url, method='POST',
@@ -196,3 +208,5 @@ class AgodaSpider(HotelSpider):
                               "Cache-Control": "max-age=0",
                               "Connection": "keep-alive",
                               "Content-Type": "application/x-www-form-urlencoded"})
+        else:
+            log.msg("COMPLETED ....!", level=log.INFO)
