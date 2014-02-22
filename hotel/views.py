@@ -169,12 +169,15 @@ def get_result(request):
     else:
         hotel_data = hotel_data.order_by('-user_rating')
     
+    print "\n1hotel_data==",hotel_data
     # FILTER RESULT PAGE
     hotel_data = filter_result_page(request, hotel_data)
     
+    print "\n2hotel_data==",hotel_data
     #FILTER TO GET BEST HOTEL INFO IF HAVE 2 RECORD FOR SAME HOTEL BY 2 DOMAIN
     hotel_data = filter_duplicate_hotel(hotel_data, check_in)
     
+    print "\n3hotel_data==",hotel_data
     ####Pagination
     count_hotel = len(hotel_data)
     page_number = request.POST.get('page')
@@ -195,10 +198,10 @@ def get_result(request):
 #    render grid hotel result, if change page
     if page_number or sort_result:
         print "\n return grid hotels detail"
-        return render(request, 'hotel/hotel_grid_detail.html', {'data': hotels, 'count_hotel': count_hotel, 'date_start':request.GET.get('check_in') })
+        return render(request, 'hotel/hotel_grid_detail.html', {'data': hotels, 'count_hotel': count_hotel, 'location': location_obj, 'date_start':request.GET.get('check_in') })
         
     
-    return render(request, 'hotel/result.html', {'vals': vals, 'hotel_data': hotels, 'count_hotel': count_hotel})
+    return render(request, 'hotel/result.html', {'vals': vals, 'hotel_data': hotels, 'count_hotel': count_hotel, 'location': location_obj})
 #    return HttpResponseRedirect(reverse('result', args=(vals)))
     
 def get_filter_result(request):
@@ -237,23 +240,23 @@ def call_spider(Spider, location, check_in, check_out):
 #FILTER TO GET BEST HOTEL INFO IF HAVE 2 RECORD FOR SAME HOTEL BY 2 DOMAIN
 #AT THE MOMENT ONLY CHOOSE HOTEL WHICH HAVE LOWER PRICE THAN
 def filter_duplicate_hotel(hotel_data, check_in):
-    print "\n filter======="
+    print "\n filter duplicate hotel======="
     remove_index_hotel_data = []
     for i in range(0, len(hotel_data)-1):
         for j in range(i+1, len(hotel_data)):
-            if hotel_data[i].name ==hotel_data[j].name:
+            if hotel_data[i].name ==hotel_data[j].name and hotel_data[i].location == hotel_data[j].location and hotel_data[i].address == hotel_data[j].address:
                 #Start to validate to choose best hotel
                 if hotel_data[i].lowest_price > hotel_data[j].lowest_price:
                     remove_index_hotel_data.append(j)
                 else:
                     remove_index_hotel_data.append(i)
-    
     return_hotel_data = []
     if remove_index_hotel_data:
         for i in range(0, len(hotel_data)):
             if i not in remove_index_hotel_data:
                 return_hotel_data.append(hotel_data[i])
-    
+    else:
+        return_hotel_data = hotel_data
     return return_hotel_data
 
                        
@@ -343,3 +346,15 @@ def filter_hotel(type_filter, filter_content, hotel_data):
     
     print "\n return hotel==",hotel_data
     return hotel_data
+
+
+from django.utils import simplejson
+def autocompleteLocation(request):
+    search_qs = Location.objects.filter(name__startswith=request.REQUEST['search'])
+    results = []
+    for r in search_qs:
+        results.append(r.name)
+    resp = request.REQUEST['callback'] + '(' + simplejson.dumps(results) + ');'
+    print "\n autocomplete----",resp
+    return HttpResponse(resp, content_type='application/json')
+

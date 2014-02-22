@@ -10,7 +10,11 @@
 		
 		<div id="result_count">
 			<span class="hotel_display_count">{{data|length}} of {{count_hotel}} hotels</span>
-			<span class="hotel_display_location">in Ho Chi Minh city</span>
+			
+			<span class="hotel_display_location">in
+				{{location.name}}
+				<!-- {% with data|first as first_hotel %}{{ first_hotel.location.name }}{% endwith %} -->
+			</span>
 		</div>
 	</div>
 	<!-- Grid hotel details -->
@@ -22,7 +26,7 @@
 			    <div id="hotel_content_front">
 					<div id="hotel_detail_photo_wrapper">
 						<div id="hotel_detail_photo">
-							<a class="thumbnail topopup" href="{{hotel.id}}?date_start={{date_start}}" ><img class="img-responsive" src="{{hotel|get_hotel_main_image}}"></a>
+							<a class="thumbnail topopup" href="{{hotel.id}}?date_start={{date_start}}" ><img class="img-responsive" src="{{hotel|get_hotel_main_image}}" style="height:120px;width:194px;"></a>
 						</div>
 					</div>
 					<div class="hotel_detail_name_star_location">
@@ -35,7 +39,7 @@
 						</div>
 						<div class="hotel_detail_location_wrapper">
 							<span class="hotel_detail_location">
-								{{hotel.address|truncatechars:55}}
+								{{hotel.address|truncatechars:50}}
 							</span>
 						</div>
 					</div>

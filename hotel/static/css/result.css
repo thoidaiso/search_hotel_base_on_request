@@ -364,3 +364,7 @@ background-color: #fff;
 	height: 40px;
 	font-size: 14px;
 }
+
+.thumbnail {
+	border: 0px;
+}

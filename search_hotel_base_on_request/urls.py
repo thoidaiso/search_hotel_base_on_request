@@ -15,5 +15,6 @@ urlpatterns = patterns('',
 #    url(r'^search/', views.ResultView.as_view(), name='result'),
     url(r'^get_result/$', views.get_result, name='get_result'),
     url(r'^get_filter_result/', views.get_filter_result, name='get_filter_result'),
-     url(r'^get_result/(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail'),
+    url(r'^get_result/(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail'),
+    url(r'^search.json/$', views.autocompleteLocation, name='autocompleteLocation'),
 )
