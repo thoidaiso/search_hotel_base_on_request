@@ -1,20 +1,16 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
+
 admin.autodiscover()
 from hotel import views
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'search_hotel_base_on_request.views.home', name='home'),
-#    url(r'^s', include('hotel.urls', namespace="hotel")),
-    url(r'^admin/', include(admin.site.urls)),
-#    url(r'^hotel/', include('hotel.urls', namespace="hotel")),
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^search/$', views.ResultView.as_view(), name='result'),
-#    url(r'^search/', views.ResultView.as_view(), name='result'),
-    url(r'^get_result/$', views.get_result, name='get_result'),
-    url(r'^get_filter_result/', views.get_filter_result, name='get_filter_result'),
-    url(r'^get_result/(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail'),
-    url(r'^search.json/$', views.autocompleteLocation, name='autocompleteLocation'),
+                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^$', views.IndexView.as_view(), name='index'),
+                       url(r'^search/$', views.ResultView.as_view(), name='result'),
+                       url(r'^get_result/$', views.get_result, name='get_result'),
+                       url(r'^get_filter_result/', views.get_filter_result, name='get_filter_result'),
+                       url(r'^get_result/(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail'),
+                       url(r'^search.json/$', views.autocompleteLocation, name='autocompleteLocation'),
 )
