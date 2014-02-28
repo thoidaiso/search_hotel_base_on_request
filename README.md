@@ -14,6 +14,10 @@ pip install django-celery
 #Install flower for web-monitor
 pip install flower
 
+#Install RabbitMQ
+sudo apt-get install rabbitmq-server
+
+
 #MIgrate database celery
 python manage.py migrate djcelery
 
