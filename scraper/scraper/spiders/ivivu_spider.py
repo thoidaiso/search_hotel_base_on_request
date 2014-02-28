@@ -100,8 +100,7 @@ class IvivuSpider(HotelSpider):
         """
         hotel_name = response.meta['hotel']
         sel = Selector(response)
-        #        from scrapy.shell import inspect_response
-        #        inspect_response(response, self)
+        
         rooms = sel.xpath('//div[@class="table_hoteldetail after"]')
         room_name = rooms.xpath('.//h2/text()').extract()
         price = rooms.xpath('//span[@class="price "]/text()').re(r'([0-9-].[0-9-])')
@@ -118,10 +117,16 @@ class IvivuSpider(HotelSpider):
         @param response:
         """
         sel = Selector(response)
+#        from scrapy.shell import inspect_response
+#        inspect_response(response, self)
+        
         img = sel.xpath('//div[@class="contents_new_box"]/ul/li/a[@class="hover_bg_inset"]/@href').extract()
         ivivu_detail['hotelId'] = response.url.split('/')[-2].split('-')[-1]
-
+        
         description = sel.xpath('//div[@class="new_box"]/div/div').extract()[2]
+        if 'Check in' in description:
+            description = sel.xpath('//div[@class="new_box"]/div/div').extract()[1]
+            
         if '<div' in description:
             description = description[description.index('>') + 1:]
             description = description.replace('</div>', '').replace('\r\n', '').replace('<br>', '').strip()
