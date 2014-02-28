@@ -11,6 +11,8 @@ Backend is scrapy
 pip install Celery
 pip install django-celery
 
+#Install flower for web-monitor
+pip install flower
 
 #MIgrate database celery
 python manage.py migrate djcelery
