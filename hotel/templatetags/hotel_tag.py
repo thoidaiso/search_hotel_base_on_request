@@ -35,6 +35,11 @@ def get_hotel_lowest_price(hotel_obj, from_date):
         return hotel_obj.lowest_price
     return price_books[0].price
 
+@register.filter
+def get_hotel_user_rating(hotel_obj, user_rating):
+    if user_rating >0:
+        return user_rating
+    return 'N/A'
 
 @register.filter
 def separate_hotel_service(service):
