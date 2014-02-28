@@ -25,6 +25,10 @@ class Hotel_Domain(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Hotel Domain"
+        verbose_name_plural = "Hotel Domain"
+
 
 class Hotel(models.Model):
 #    user_request = models.ForeignKey(Users_Request, null=True, blank=True)
@@ -69,9 +73,16 @@ class Price_Book(models.Model):
     date_start = models.DateField(null=True, blank=True)
     date_end = models.DateField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "Price Book"
+        verbose_name_plural = "Price Book"
 
 class Image_Hotel(models.Model):
     hotel = models.ForeignKey(Hotel, null=True, blank=True)
     room = models.ForeignKey(Room, null=True, blank=True)
     src = models.CharField(max_length=200)
     main = models.BooleanField()  # main image
+
+    class Meta:
+        verbose_name = "Image Hotel"
+        verbose_name_plural = "Image Hotel"

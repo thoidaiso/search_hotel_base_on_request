@@ -6,6 +6,7 @@ admin.autodiscover()
 from hotel import views
 
 urlpatterns = patterns('',
+                       url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^$', views.IndexView.as_view(), name='index'),
                        url(r'^search/$', views.ResultView.as_view(), name='result'),

@@ -34,7 +34,7 @@ CELERYBEAT_SCHEDULER =  'djcelery.schedulers.DatabaseScheduler'
 ##        'schedule': timedelta(minutes=2),
 #        'args': ('agoda.com',1, 13)
 #    },
-#    
+#
 #    'craw_ivivu_every_day': {
 #        'task': 'celery_app.tasks.crawl_spider',
 #        'schedule': crontab(hour=11, minute=22),
@@ -77,7 +77,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-                  
+    'grappelli',
     'django_admin_bootstrapped.bootstrap3',
     'django_admin_bootstrapped',
     'django.contrib.admin',
@@ -154,3 +154,10 @@ STATIC_URL = '/static/'
 
 #Define template path
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'hotel/templates')]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+)
+
+GRAPPELLI_ADMIN_TITLE = 'Admin Panel - Search Hotel Base On Request'

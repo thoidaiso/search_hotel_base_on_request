@@ -1,6 +1,7 @@
 Django==1.6.1
 Scrapy==0.20.2
 psycopg2
+django-grappelli==2.5.1
 django-admin-bootstrapped
 South
 Celery
