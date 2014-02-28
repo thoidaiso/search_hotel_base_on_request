@@ -3,3 +3,5 @@
 # Please refer to the documentation for information on how to create and manage
 # your spiders.
 import hotel_spider
+import agoda_spider
+import ivivu_spider

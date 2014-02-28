@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views import generic
 from hotel.models import Hotel, Location
-from ConnectorToScrapy import ConnectorToScrapy
+#from ConnectorToScrapy import ConnectorToScrapy
 from django.utils import timezone
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -106,6 +106,15 @@ def get_result(request):
         hotel_data = Hotel.objects.filter(location=location_obj)
 
     else:
+        #################TRY
+#        from celery_app.tasks import crawl_spider
+#        args = {'from_date': check_in}
+#        crawl_spider(0,args)
+#    
+        ###############ENDTRY
+#        from django.db import connection
+#        connection.close()
+        
         location = re.sub('[-.,_/\| ]+', '', location)
         location = location.lower()
         location = location.replace('city', '')
@@ -159,19 +168,6 @@ def get_result(request):
 
 def get_filter_result(request):
     return HttpResponseRedirect(reverse('index', args=()))
-
-#def create_user_request(vals):
-#    var_dict = {}
-#    if vals.get('check_out', False):
-#        var_dict = { 'date_end': vals['check_out'] }
-#    object, created = Users_Request.objects.get_or_create(location = vals.get('location',''),
-#                                        create_time = vals.get('create_time', False) ,
-#                                        date_start  = vals.get('check_in', False) ,
-#                                        room_count  = vals.get('room_count', 0),
-#                                        guess_count = vals.get('guess_count', 0),
-#                                        defaults    = var_dict
-#                                        )
-#    return {'object': object, 'created': created}
 
 
 def call_spider(Spider, location, check_in, check_out):
@@ -294,7 +290,7 @@ def filter_hotel(type_filter, filter_content, hotel_data):
 
 from django.utils import simplejson
 def autocompleteLocation(request):
-    search_qs = Location.objects.filter(name__startswith=request.REQUEST['search'])
+    search_qs = Location.objects.filter(name__icontains=request.REQUEST['search'])
     results = []
     for r in search_qs:
         results.append(r.name)

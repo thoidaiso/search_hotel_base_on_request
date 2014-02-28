@@ -29,8 +29,9 @@ class HotelSpider(BaseSpider):
 
     def create_image(self, hotel_name, image, main=False):
         if image and hotel_name:
-            hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
-            Image_Hotel.objects.get_or_create(hotel=hotel_obj,
+            hotel_obj = Hotel.objects.filter(name=hotel_name)
+            if hotel_obj:
+                Image_Hotel.objects.get_or_create(hotel=hotel_obj[0],
                                               src=image,
                                               main=main
                                               )
@@ -77,27 +78,31 @@ class HotelSpider(BaseSpider):
 
     def create_room(self, spider_name, hotel_name, room_name, number_of_people, price):
         log.msg("create room for" + hotel_name, level=log.INFO)
+        print "\n create room for ", hotel_name
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name=spider_name, priority=1)
-        hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
-        #        log.msg("hotel_obj room"+str(hotel_obj.name), level=log.INFO)
-        for pos in range(0, len(room_name)):
-            room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
-                                                           name=room_name[pos],
-                                                           number_of_people=number_of_people[pos])
-            if not price:
-                price = 0
-            log.msg("price:" + (price and pos <= len(price) and price[pos] or ''), level=log.INFO)
-            self.create_price_book_period(hotel_obj, room_obj, price and price[pos] or 0)
+        hotel_objs = Hotel.objects.filter(name=hotel_name)
+#        log.msg("hotel_obj room"+str(hotel_obj.name.encode('ascii', 'ignore')), level=log.INFO)
+        if hotel_objs and len(room_name) == len(number_of_people) == len(price):
+            hotel_obj =hotel_objs[0]
+            for pos in range(0, len(room_name)):
+                room_obj, created = Room.objects.get_or_create(hotel=hotel_obj,
+                                                               name=room_name[pos],
+                                                               number_of_people=number_of_people[pos])
+                if not price:
+                    price = 0
+                log.msg("price:" + (price and pos <= len(price) and price[pos] or ''), level=log.INFO)
+                self.create_price_book_period(hotel_obj, room_obj, price and price[pos] or 0)
 
 
     def create_price_book_period(self, hotel_obj, room_obj, price):
         hotel_domain_obj, created = Hotel_Domain.objects.get_or_create(name='agoda.com', priority=1)
+        price = price.replace(',','')
         obj, created = Price_Book.objects.get_or_create(hotel=hotel_obj,
                                                         room=room_obj,
                                                         hotel_domain=hotel_domain_obj,
                                                         date_start=self.from_date,
                                                         date_end=self.to_date,
-                                                        defaults={'price': float(price)}
+                                                        defaults={'price': float(price) or 0}
                                                         )
         if not created and obj.price > float(price):
             Price_Book.objects.filter(pk=obj.id).update(price=float(price))
@@ -117,6 +122,7 @@ class HotelSpider(BaseSpider):
         @param area:
         """
         log.msg("len name ...." + str(len(name)), level=log.INFO)
+        print "\n name===",str(name)
         if len(name) == len(href) == len(address) == len(area) == len(currency) == len(star_rating) == len(
                 users_rating) == len(lowest_price):
             for pos in range(0, len(name)):
@@ -143,8 +149,9 @@ class HotelSpider(BaseSpider):
         """
         if description and service:
             log.msg("hotel_name for hotel " + hotel_name)
-            hotel_obj = Hotel.objects.filter(name=hotel_name)[0]
-            if hotel_obj:
+            hotel_objs = Hotel.objects.filter(name=hotel_name)
+            if hotel_objs:
+                hotel_obj = hotel_objs[0]
                 if (hotel_obj.description and len(description) > len(
                         hotel_obj.description)) or not hotel_obj.description:
                     Hotel.objects.filter(pk=hotel_obj.id).update(description=description)

@@ -1,3 +1,50 @@
+from __future__ import absolute_import
+# ^^^ The above is required if you want to import from the celery
+# library.  If you don't have this then `from celery.schedules import`
+# becomes `proj.celery.schedules` in Python 2.x since it allows
+# for relative imports by default.
+
+# Celery settings
+
+BROKER_URL = 'amqp://guest:guest@localhost//'
+
+#: Only add pickle to this list if your broker is secured
+#: from unwanted access (see userguide/security.html)
+CELERY_ACCEPT_CONTENT = ['json', 'pickle']
+#CELERY_TIMEZONE = 'Asia/Ho_Chi_Minh'
+
+#CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend',
+#CELERY_RESULT_BACKEND='djcelery.backends.cache:CacheBackend',
+
+
+CELERYBEAT_SCHEDULER =  'djcelery.schedulers.DatabaseScheduler'
+
+
+#from celery.schedules import crontab
+
+
+#args = {'from_date': datetime.now() + timedelta(days=1),
+#        'to_date'  : datetime.now() + timedelta(days=3)
+#        }
+
+#CELERYBEAT_SCHEDULE = {
+#    'craw_agoda_every_day': {
+#        'task': 'celery_app.tasks.crawl_spider1',
+#        'schedule': crontab(hour=15, minute=15),
+##        'schedule': timedelta(minutes=2),
+#        'args': ('agoda.com',1, 13)
+#    },
+#    
+#    'craw_ivivu_every_day': {
+#        'task': 'celery_app.tasks.crawl_spider',
+#        'schedule': crontab(hour=11, minute=22),
+##        'schedule': timedelta(minutes=2),
+#        'args': ('ivivu.com',1, 13)
+#    },
+#}
+
+
+
 """
 Django settings for search_hotel_base_on_request project.
 
@@ -41,6 +88,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'hotel',
     'south',
+    'djcelery',
+    'celery_app',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -76,7 +125,7 @@ WSGI_APPLICATION = 'search_hotel_base_on_request.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'hotel3',                      # Or path to database file if using sqlite3.
+        'NAME': 'hotel_demo',                      # Or path to database file if using sqlite3.
         'USER': 'openerp',                      # Not used with sqlite3.
         'PASSWORD': 'openerp',                  # Not used with sqlite3.
         'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.

@@ -78,8 +78,11 @@ class AgodaSpider(HotelSpider):
         if len(hotel_name) == 0:
             hotel_name = sel.xpath(
                 '//span[@id="ctl00_ctl00_MainContent_ContentMain_hotelheader1_lblHotelName"]/text()').extract()
-
-        hotel_name = hotel_name[0]
+        
+        if hotel_name:
+            hotel_name = hotel_name[0]
+        else: 
+            hotel_name = ''
 
         description = sel.xpath(
             '//div[@id="ctl00_ctl00_MainContent_ContentMain_HotelInformation1_pnlDescription"]/div/text()').extract()
@@ -128,6 +131,7 @@ class AgodaSpider(HotelSpider):
 
         @param response:
         """
+        
         # import random
         #
         # ran = random.randint(0, 100)  #Inclusive
@@ -150,10 +154,13 @@ class AgodaSpider(HotelSpider):
                 lowest_price.append(int(price))
             except:
                 pass
-
+        
+        print "\n urll===",str(response.url)
         location = sel.xpath('//*[@id="pHeadertext"]/span[@class="blue ssr_search_text"][2]/text()').extract() or ''
         print 'Location -------------', location
-        location_obj = self.create_location(location and location[0] or '')
+        location = location and location[0] or ''
+        if location:
+            location_obj = self.create_location(location)
 
         # Get the rating of hotel, some hotel dont have user rating. So boring
         users_rating = []
@@ -180,14 +187,19 @@ class AgodaSpider(HotelSpider):
         for el in star_rating:
             rating.append(el and el.split(' ')[0].replace('ssrstars', '')[0] or 1)
         log.msg("Create Hotel", level=log.INFO)
-        self.create_hotel('agoda.com', name, href, location_obj, rating, users_rating, currency, lowest_price, address,
-                          area, 1)
+        print "\n Create HOtel::"
+        if location and location_obj:
+            print "1"
+            self.create_hotel('agoda.com', name, href, location_obj, rating, users_rating, currency, lowest_price, address,
+                              area, 1)
         for url in urls:
             yield Request(url='http://www.agoda.com' + url, callback=self.hotel_detail)
 
-        log.msg("NEXT PAGE", level=log.INFO)
+       
         view_state = sel.xpath('//input[@id="__VIEWSTATE"]/@value').extract()
         if location and name:
+            print "\n go to next page---"
+            log.msg("NEXT PAGE", level=log.INFO)
             if view_state:
                 next_page_data['__VIEWSTATE'] = view_state[0]
             else:
@@ -209,4 +221,5 @@ class AgodaSpider(HotelSpider):
                               "Connection": "keep-alive",
                               "Content-Type": "application/x-www-form-urlencoded"})
         else:
+            print "\n COMPLETED---"
             log.msg("COMPLETED ....!", level=log.INFO)
