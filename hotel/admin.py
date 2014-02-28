@@ -22,7 +22,7 @@ class Hotel_Domain_Admin(admin.ModelAdmin):
     list_display = ['name', 'priority']
 
     #    Design many2one
-    inlines = [HotelInline]
+#    inlines = [HotelInline]
 
 
 admin.site.register(Hotel_Domain, Hotel_Domain_Admin)
@@ -57,7 +57,7 @@ class Room_Admin(admin.ModelAdmin):
 #    Design form
     fieldsets = [
         (None, {'fields': ['name', 'hotel']}),
-        ('Price', {'fields': ['price', 'currency'], 'classes': ['collapse']} ),
+#        ('Price', {'fields': ['price', 'currency'], 'classes': ['collapse']} ),
         ('People', {'fields': ['number_of_people']}),
         ('Description', {'fields': ['room_info'], 'classes': ['collapse']}),
 

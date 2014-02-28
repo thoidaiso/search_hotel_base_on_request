@@ -189,7 +189,8 @@ def filter_duplicate_hotel(hotel_data, check_in):
     remove_index_hotel_data = []
     for i in range(0, len(hotel_data)-1):
         for j in range(i+1, len(hotel_data)):
-            if hotel_data[i].name ==hotel_data[j].name and hotel_data[i].location == hotel_data[j].location and hotel_data[i].address == hotel_data[j].address:
+            if hotel_data[i].name ==hotel_data[j].name and hotel_data[i].location == hotel_data[j].location and two_hotel_address_is_nearly_similar(hotel_data[i].address, hotel_data[j].address):
+                
                 #Start to validate to choose best hotel
                 if hotel_data[i].lowest_price > hotel_data[j].lowest_price:
                     remove_index_hotel_data.append(j)
@@ -205,7 +206,24 @@ def filter_duplicate_hotel(hotel_data, check_in):
         return_hotel_data = hotel_data
     return return_hotel_data
 
-
+#Compare if two hotel address is nearly similar 
+def two_hotel_address_is_nearly_similar(add1, add2):
+    
+    add1_arr = add1.split(',')
+    add2_arr = add2.split(',')
+    
+    print "=a1",add1_arr
+    print "=a2",add2_arr
+    
+    count = 0
+    for add in add1_arr:
+        if add in add2_arr:
+            count += 1
+    
+    if count >= (len(add1_arr) + len(add2_arr) ) /4:
+        return True
+    return False
+    
 
 #FILTER RESULT PAGE BASE ON FILTER AND OLD FILTER IN SESSION
 def filter_result_page(request, hotel_data):

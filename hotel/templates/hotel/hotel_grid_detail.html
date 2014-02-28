@@ -51,7 +51,7 @@
 						<div class="hotel_detail_rating_wrapper">
 							<span class="hotel_detail_rating_with">with</span>
 							<div class="hotel_detail_rating">
-								<span class="hotel_detail_rating">{{hotel.user_rating}}</span>
+								<span class="hotel_detail_rating">{{hotel|get_hotel_user_rating:hotel.user_rating}}</span>
 								<div class="rating_symbol"></div>
 							</div>
 						</div>
