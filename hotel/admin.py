@@ -31,7 +31,7 @@ admin.site.register(Hotel_Domain, Hotel_Domain_Admin)
 class Hotel_Admin(admin.ModelAdmin):
 #    Design form
     fieldsets = [
-        (None, {'fields': ['name', 'order_in_page', 'src', 'hotel_domain']}),
+        (None, {'fields': ['name', 'src', 'hotel_domain']}),
         ('Price', {'fields': ['lowest_price', 'currency'], 'classes': ['collapse']} ),
         ('Location', {'fields': ['location']}),
         ('Rating', {'fields': ['star_rating', 'user_rating'], 'classes': ['collapse']}),
