@@ -19,9 +19,11 @@ pip install django-celery
 /search_hotel_base_on_request$ celery -A search_hotel_base_on_request worker  -l info -B 
 
 
+
 ---Run celery web monitor, we will have a web monitor at localhost:5555
 
 /search_hotel_base_on_request$ celery flower
+
 
 
 
