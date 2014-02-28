@@ -79,7 +79,7 @@ class IvivuSpider(HotelSpider):
         #        Get location city of hotel
         location = sel.xpath('//span[@itemprop="offerCount"]/text()').extract()
         location = len(location) and location[0].replace('hotels in', '')
-        location = re.sub('[(1-9]', '', location).strip()
+        location = re.sub('[(0-9]', '', location).strip()
 
         location_obj = self.create_location(location)
         self.create_hotel('ivivu.com', name, href, location_obj, star_rating, users_rating, currency, lowest_price,
