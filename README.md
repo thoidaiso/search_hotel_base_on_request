@@ -12,6 +12,9 @@ pip install Celery
 pip install django-celery
 
 
+#MIgrate database celery
+python manage.py migrate djcelery
+
 #Run celery
 
 --------Run worker and beat(scheduler)
