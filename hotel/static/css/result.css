@@ -369,3 +369,26 @@ background-color: #fff;
 .thumbnail {
 	border: 0px;
 }
+.none_content{
+	height: 50px;
+}
+.help_content_wraper{
+	display: block;
+	margin-left: 200px;
+	margin-right: 200px;
+	font-family: Helvetica,Arial,sans-serif;
+}
+
+.help_content_header_span{
+	font-size: 1.875em;
+	color: #255e7a;
+	font-style: italic;
+}
+.help_content_body{
+	margin-top: 20px;
+	font-size: 1.3em;
+}
+.none_all_content{
+	height: 300px;
+}
+

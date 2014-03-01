@@ -1,5 +1,5 @@
 from django.contrib import admin
-from hotel.models import Hotel_Domain, Hotel, Room, Image_Hotel
+from hotel.models import Hotel_Domain, Hotel, Room, Image_Hotel, Location
 
 
 class HotelInline(admin.TabularInline):
@@ -85,3 +85,11 @@ class Image_Hotel_Admin(admin.ModelAdmin):
 
 
 admin.site.register(Image_Hotel, Image_Hotel_Admin)
+
+class Location_Admin(admin.ModelAdmin):
+    #    Design form
+    list_display = ['name', 'short_name']
+
+
+
+admin.site.register(Location, Location_Admin)

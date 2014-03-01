@@ -166,6 +166,9 @@ def get_result(request):
     return render(request, 'hotel/result.html', {'vals': vals, 'hotel_data': hotels, 'count_hotel': count_hotel, 'location': location_obj})
 #    return HttpResponseRedirect(reverse('result', args=(vals)))
 
+def get_help(request):
+    return render(request, 'hotel/help.html', {})
+
 def get_filter_result(request):
     return HttpResponseRedirect(reverse('index', args=()))
 
