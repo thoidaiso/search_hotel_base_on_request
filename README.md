@@ -39,3 +39,8 @@ python manage.py migrate djcelery
 ----Run celery cam to save data about task like time... in database
 
 /search_hotel_base_on_request$ python manage.py celerycam
+
+
+--Install pdfdocument
+
+sudo pip install pdfdocument
