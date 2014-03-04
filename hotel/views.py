@@ -146,10 +146,10 @@ def get_result(request):
     hotel_data = filter_duplicate_hotel(hotel_data, check_in)
     
     
-    #CHECK IF EXPORT
+#    #CHECK IF EXPORT
 #    print "\n export===",request.GET
     if request.GET.get('export_type'):
-        response = export_data(hotel_data, request.GET.get('export_type'))
+        response = export_data(hotel_data, request.GET.get('export_type'), request)
         return response
         
     ####Pagination
@@ -333,22 +333,30 @@ def autocompleteLocation(request):
 
 
 
-def export_data(hotel_data, export_type):
-    print "\n export_type==",export_type
+def export_data(hotel_data, export_type, request):
+#    print "\n export_type==",request.GET
+#    print "\n hotel_data==",hotel_data
     response = None
     if export_type == 'csv':
-        response = export_to_csv(hotel_data)
+        response = export_to_csv(hotel_data, request)
     elif export_type == 'pdf':
-        response = export_to_pdf(hotel_data)
+        response = export_to_pdf(hotel_data, request)
     
     return response
 
-def export_to_csv(hotel_data):
+def export_to_csv(hotel_data, request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="hotel_data.csv"'
     
     writer = csv.writer(response)
     
+    description, star_rating, facilities = get_description_from_filter(request)
+    if star_rating:
+        description +=  " --------- Star rating:" + star_rating
+    
+    if facilities:
+        description += "  --------- Facilities: " + facilities
+    writer.writerow([  description ])
     writer.writerow(['', 'Hotel Name', 'Location', 'Lowest Price', 'Star rating', 'User rating'])
     number = 1
     for hotel in hotel_data:
@@ -359,11 +367,22 @@ def export_to_csv(hotel_data):
     return response
 
 
-def export_to_pdf(hotel_data):
+def export_to_pdf(hotel_data, request):
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=hotel_data.pdf'
     pdf = PDFDocument(response)
     pdf.init_report()
+    
+    description, star_rating, facilities = get_description_from_filter(request)
+    
+    pdf.h1(description)
+    if star_rating:
+        pdf.p(" Star rating:" + star_rating )
+    
+    if facilities:
+        pdf.p("Facilities: " + facilities)
+    
+    
     
     from reportlab.lib.styles import getSampleStyleSheet
     styles = getSampleStyleSheet()
@@ -396,4 +415,28 @@ def export_to_pdf(hotel_data):
     pdf.generate()
     
     return response
+
+def get_description_from_filter(request):
+    star_rating = []
+    facilities = []
+    jump_dict = ['check_in', 'check_out', 'export_type', 'search_name', 'csrfmiddlewaretoken', 'search_hotelname']
+    
+    for key in request.GET:
+        if key not in jump_dict:
+            if request.GET.get(key).strip() in ['1','2','3','4','5']:
+                star_rating.append(request.GET.get(key) )
+            else:
+                if request.GET.get(key) == 'smok':
+                    facilities.append("smoke") 
+                else:
+                    facilities.append(request.GET.get(key))
+    
+    star_rating = ','.join(star_rating)
+    facilities = ','.join(facilities)
+    
+    description = 'Hotels in '+ request.GET.get('search_name')
+    return description, star_rating, facilities
+
+
+
 

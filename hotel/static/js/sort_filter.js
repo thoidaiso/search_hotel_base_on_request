@@ -11,7 +11,7 @@ $( document ).ready(function() {
 	{
 		csrf_token = $( "input[name='csrfmiddlewaretoken']" )[0].value;
 		url = $(location).attr('href').replace($(location).attr('host'),'').replace('http://','');
-		$("body").append('<iframe src="'+url+' &export_type=csv" style="display: none;" ></iframe>');
+		$("body").append('<iframe src="'+url+'&export_type=csv" style="display: none;" ></iframe>');
 
 	}
 	)
@@ -20,7 +20,7 @@ $( document ).ready(function() {
 	{
 		csrf_token = $( "input[name='csrfmiddlewaretoken']" )[0].value;
 		url = $(location).attr('href').replace($(location).attr('host'),'').replace('http://','');
-		$("body").append('<iframe src="'+url+' &export_type=pdf" style="display: none;" ></iframe>');
+		$("body").append('<iframe src="'+url+'&export_type=pdf" style="display: none;" ></iframe>');
 
 	}
 	)
