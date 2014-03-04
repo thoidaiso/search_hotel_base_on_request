@@ -1,0 +1,40 @@
+#popup_page{
+	font-family: Helvetica,Arial,sans-serif;
+	font-size: 25px;
+	margin: 20px;
+}
+#popup_header{
+	margin-bottom: 30px;
+	text-align: center;
+	
+}
+.statistic_basic_info{
+	margin-bottom: 10px;
+}
+.statistic_concatenate_basic_info{
+	margin-left: 20px;
+	margin-bottom: 20px;
+	color:#006699;
+	font-size: 20px;
+}
+.statistic_extra_basic_info{
+	font-size: 15px;
+	font-style: italic;
+}
+.break_popup {
+	height: 30px;
+	background-color: antiquewhite;
+	margin-bottom: 20px;
+}
+.statistic_body_content_span{
+	font-size: 20px;
+	margin-bottom: 10px;
+	font-family: Georgia,serif;
+	
+}
+.statistic_hotel_name{
+	/*font-style: italic;*/
+}
+.statistic_hotel_value{
+	color: #3b2525;
+}

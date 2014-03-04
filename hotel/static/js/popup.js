@@ -14,6 +14,17 @@ jQuery(function($) {
 	return false;
 	});
 	
+	// Load statistic info
+	$('#statistic').click(function(){
+		url = $(location).attr('href').replace($(location).attr('host'),'').replace('http://','').replace('/get_result/?','');
+		loading_statistic(url); // loading
+		setTimeout(function(){ // then show popup, delay in .5 second
+			loadPopup(); // function show popup 
+		}, 500); // .5 second
+		return false;
+	});
+	
+	
 	/* event for close the popup */
 	$("div.close_popup").hover(
 					function() {
@@ -49,6 +60,33 @@ jQuery(function($) {
 	
 
 	 /************** start: functions. **************/
+	function loading_statistic(url){
+		$("div.loader").show();  
+		
+		data_post = {}
+		
+		url_arr = url.split('&');
+		for (var i =0; i< url_arr.length; i++)
+		{
+			arr = url_arr[i].split('=');
+			if (arr.length == 2)
+			{
+				data_post[arr[0]] = arr[1]
+			}
+		}
+		console.log(url);
+		console.log(data_post);
+		
+		 $.ajax({
+             url: 'statistic',
+             type: 'GET',
+             data: data_post,
+             success: function(response) {
+             	$('#popup_content').html(response);
+             }
+             })
+	}
+	
 	function loading(hotel_id) {
 		$("div.loader").show();  
 		
@@ -76,8 +114,6 @@ jQuery(function($) {
 				  });
              }
              })
-         
-         
 		
 	}
 	function closeloading() {

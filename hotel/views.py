@@ -181,6 +181,66 @@ def get_result(request):
 def get_help(request):
     return render(request, 'hotel/help.html', {})
 
+def statistic(request):
+    print "\nstatisctis--",request.GET
+    location = request.GET.get('search_name').replace('+',' ')
+    check_in = request.GET.get('check_in')
+    check_in = check_in and datetime.strptime(check_in, "%d-%m-%Y")
+    hotel_data = []
+    if Location.objects.filter(name=location).exists():
+        location_obj = Location.objects.filter(name=location)[0]
+        #        for hotel in Hotel.objects.filter(location = location_obj):
+        #            hotel_data.append(hotel)
+        hotel_data = Hotel.objects.filter(location=location_obj)
+        
+      # FILTER RESULT PAGE
+    hotel_data = filter_result_page(request, hotel_data)
+
+    #get number of hotel are duplicate
+    remove_index_hotel_data = []
+    for i in range(0, len(hotel_data)-1):
+        for j in range(i+1, len(hotel_data)):
+            if hotel_data[i].name ==hotel_data[j].name and hotel_data[i].location == hotel_data[j].location and two_hotel_address_is_nearly_similar(hotel_data[i].address, hotel_data[j].address):
+                
+                #Start to validate to choose best hotel
+                if hotel_data[i].lowest_price > hotel_data[j].lowest_price:
+                    remove_index_hotel_data.append(j)
+                else:
+                    remove_index_hotel_data.append(i)
+    
+    
+    number_of_hotel = len(hotel_data) - len(remove_index_hotel_data)
+    print 'number_of_hotel==',len(hotel_data),';;remove_index_hotel_data==',len(remove_index_hotel_data)
+    print 'number_of_hotel==',number_of_hotel
+    
+    description, star_rating, facilities = get_description_from_filter(request)
+    description = str(number_of_hotel) + " " + description.replace('+',' ')
+    
+    highes_price_hotel = None
+    lowest_price_hotel = None
+    highes_user_rating_hotel = None
+    lowest_user_rating_hotel = None
+    
+    if number_of_hotel:
+        des_price_hotel = hotel_data.order_by('-lowest_price')
+        highes_price_hotel = des_price_hotel[0]
+        lowest_price_hotel = des_price_hotel[len(hotel_data)-1]
+        
+        des_user_rating_hotel = hotel_data.order_by('-user_rating')
+        highes_user_rating_hotel = des_user_rating_hotel[0]
+        lowest_user_rating_hotel = des_user_rating_hotel[len(hotel_data)-1]
+        
+    
+        
+    return render(request, 'hotel/statistic.html', {'number_of_hotel': number_of_hotel, 
+                                                    'description': description, 
+                                                    'star_rating': star_rating, 
+                                                    'facilities': facilities, 
+                                                    'highes_price_hotel': highes_price_hotel, 
+                                                    'lowest_price_hotel': lowest_price_hotel, 
+                                                    'highes_user_rating_hotel': highes_user_rating_hotel,
+                                                    'lowest_user_rating_hotel': lowest_user_rating_hotel})
+
 def get_filter_result(request):
     return HttpResponseRedirect(reverse('index', args=()))
 
@@ -351,6 +411,7 @@ def export_to_csv(hotel_data, request):
     writer = csv.writer(response)
     
     description, star_rating, facilities = get_description_from_filter(request)
+    description = str(len(hotel_data)) + " " + description
     if star_rating:
         description +=  " --------- Star rating:" + star_rating
     
@@ -375,6 +436,7 @@ def export_to_pdf(hotel_data, request):
     
     description, star_rating, facilities = get_description_from_filter(request)
     
+    description = str(len(hotel_data)) + " " + description
     pdf.h1(description)
     if star_rating:
         pdf.p(" Star rating:" + star_rating )
@@ -431,8 +493,9 @@ def get_description_from_filter(request):
                 else:
                     facilities.append(request.GET.get(key))
     
-    star_rating = ','.join(star_rating)
-    facilities = ','.join(facilities)
+    star_rating.sort()
+    star_rating = ', '.join(star_rating)
+    facilities = ', '.join(facilities)
     
     description = 'Hotels in '+ request.GET.get('search_name')
     return description, star_rating, facilities

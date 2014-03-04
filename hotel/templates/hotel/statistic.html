@@ -1,0 +1,71 @@
+{% load staticfiles %}
+{% load hotel_tag %}
+<link href="{% static  'css/statistic.css' %}" rel="stylesheet">
+
+<div id="popup_page">
+	<div id="popup_header">
+		<div class="statistic_basic_info">
+			<span>{{description}} </span>
+			
+		</div>
+		<div class="statistic_concatenate_basic_info">
+			{%if star_rating or facilities%}
+			<span>with </span>
+			{%endif%}
+		</div>
+		<div class="statistic_extra_basic_info">
+			{%if star_rating%}
+			<div class="statistic_extra_basic_info_content">
+				<span>Star rating: {{star_rating}} </span>
+			</div>
+			
+			{%endif%}
+			
+			{%if facilities%}
+			<div class="statistic_extra_basic_info_content">
+				<span>Facilities: {{facilities}} </span>
+			</div>
+			
+			{%endif%}
+		</div>
+		
+		
+	</div>
+	<div class="break_popup"></div>
+	<div id="popup_body">
+		{%if number_of_hotel%}
+		<div class="statistic_body_content">
+			<div class="statistic_body_content_span">
+				<span>
+					Hotel <strong class="statistic_hotel_name">{{highes_price_hotel.name}}</strong> has highest price: <strong class="statistic_hotel_value">{{highes_price_hotel.lowest_price}} {{highes_price_hotel.currency}} </strong>
+				</span>
+			</div>
+			
+			<div class="statistic_body_content_span">
+				<span>
+					Hotel  <strong class="statistic_hotel_name">{{lowest_price_hotel.name}}</strong> has lowest price: <strong class="statistic_hotel_value">{{lowest_price_hotel.lowest_price}} {{lowest_price_hotel.currency}} </strong>
+				</span>
+			</div>
+			
+			<div class="statistic_body_content_span">
+				<span>
+					Hotel  <strong class="statistic_hotel_name">{{highes_user_rating_hotel.name}}</strong> has highest user rating: <strong class="statistic_hotel_value">{{highes_user_rating_hotel.user_rating}}</strong>
+				</span>
+			</div>
+			
+			<div class="statistic_body_content_span">
+				<span>
+					Hotel  <strong class="statistic_hotel_name">{{lowest_user_rating_hotel.name}}</strong> has lowest user rating: <strong class="statistic_hotel_value">{{lowest_user_rating_hotel.user_rating}}</strong>
+				</span>
+			</div>
+			
+			
+			
+			
+		</div>
+		
+		{%endif%}
+	</div>
+	
+	
+</div>
