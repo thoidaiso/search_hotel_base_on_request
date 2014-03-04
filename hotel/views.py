@@ -9,7 +9,12 @@ from hotel.models import Hotel, Location
 from django.utils import timezone
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import csv
+from pdfdocument.document import PDFDocument
+from reportlab.lib import colors
+from reportlab.platypus import Paragraph, Table
+from reportlab.lib.pagesizes import letter, inch
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 
 class IndexView(generic.ListView):
     template_name = 'hotel/index.html'
@@ -139,7 +144,14 @@ def get_result(request):
 
     #FILTER TO GET BEST HOTEL INFO IF HAVE 2 RECORD FOR SAME HOTEL BY 2 DOMAIN
     hotel_data = filter_duplicate_hotel(hotel_data, check_in)
-
+    
+    
+    #CHECK IF EXPORT
+#    print "\n export===",request.GET
+    if request.GET.get('export_type'):
+        response = export_data(hotel_data, request.GET.get('export_type'))
+        return response
+        
     ####Pagination
     count_hotel = len(hotel_data)
     page_number = request.POST.get('page')
@@ -318,4 +330,70 @@ def autocompleteLocation(request):
     resp = request.REQUEST['callback'] + '(' + simplejson.dumps(results) + ');'
     print "\n autocomplete----",resp
     return HttpResponse(resp, content_type='application/json')
+
+
+
+def export_data(hotel_data, export_type):
+    print "\n export_type==",export_type
+    response = None
+    if export_type == 'csv':
+        response = export_to_csv(hotel_data)
+    elif export_type == 'pdf':
+        response = export_to_pdf(hotel_data)
+    
+    return response
+
+def export_to_csv(hotel_data):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="hotel_data.csv"'
+    
+    writer = csv.writer(response)
+    
+    writer.writerow(['', 'Hotel Name', 'Location', 'Lowest Price', 'Star rating', 'User rating'])
+    number = 1
+    for hotel in hotel_data:
+        arr = [number, hotel.name.encode('ascii', 'ignore'), hotel.address.encode('ascii', 'ignore'), hotel.lowest_price, hotel.star_rating, hotel.user_rating]
+        writer.writerow(arr)
+        number += 1
+
+    return response
+
+
+def export_to_pdf(hotel_data):
+    response = HttpResponse(mimetype='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=hotel_data.pdf'
+    pdf = PDFDocument(response)
+    pdf.init_report()
+    
+    from reportlab.lib.styles import getSampleStyleSheet
+    styles = getSampleStyleSheet()
+    styleN = styles["BodyText"]
+    styleN.alignment = TA_LEFT
+    styleBH = styles["Normal"]
+    
+    data = []
+#    Defile header
+    data.append(['', 'Hotel Name', 'Location', Paragraph('Lowest Price (USD)', styleN) , Paragraph('Star rating', styleN), Paragraph('User rating', styleN)])
+    number = 1
+    
+#    define row in table
+    for hotel in hotel_data:
+        name = Paragraph(hotel.name.encode('ascii', 'ignore'), styleN)
+        address = Paragraph(hotel.address.encode('ascii', 'ignore'), styleN)
+        arr = [number, name, address, hotel.lowest_price, hotel.star_rating, hotel.user_rating]
+        data.append(arr)
+        number += 1
+    
+    t=Table(data,colWidths=[30, 135, 290, 40, 32, 32],  style=[
+                                        ('GRID',(0,0),(-1,-1),1,colors.black),
+                                        ('BACKGROUND',(0,0),(5,0),colors.limegreen),
+                                        ])
+    
+#    append table to page
+    pdf.story.append(t)
+#    pdf.table(data, 100)
+
+    pdf.generate()
+    
+    return response
 

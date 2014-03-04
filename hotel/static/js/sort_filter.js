@@ -7,6 +7,24 @@ $( document ).ready(function() {
     	setTimeout(sort_result_page(url, sort_type, csrf_token),3000);
 	});
 	
+	$('#export_to_csv').click(function()
+	{
+		csrf_token = $( "input[name='csrfmiddlewaretoken']" )[0].value;
+		url = $(location).attr('href').replace($(location).attr('host'),'').replace('http://','');
+		$("body").append('<iframe src="'+url+' &export_type=csv" style="display: none;" ></iframe>');
+
+	}
+	)
+	
+	$('#export_to_pdf').click(function()
+	{
+		csrf_token = $( "input[name='csrfmiddlewaretoken']" )[0].value;
+		url = $(location).attr('href').replace($(location).attr('host'),'').replace('http://','');
+		$("body").append('<iframe src="'+url+' &export_type=pdf" style="display: none;" ></iframe>');
+
+	}
+	)
+	
 	$("[id*='search_star_rating_']").change(function(){
 		setTimeout( $("#btn_search").click(),3000);
 	})
@@ -39,7 +57,7 @@ $( document ).ready(function() {
 
 
 
-	
+
 function sort_result_page(url, sort_type, csrf_token)
 {
 	console.log(url);
@@ -59,20 +77,3 @@ function sort_result_page(url, sort_type, csrf_token)
          		}
          });
 }
-// 
-// function filter_result_page(url, type_filter, filter_content, csrf_token)
-// {
-	// jQuery.ajax({
-         // url: url,
-         // type: 'POST',
-         // data: {
-         		// 'type_filter': type_filter,
-         		// 'filter_content': filter_content,
-         		// csrfmiddlewaretoken: csrf_token,
-         	// },
-         // success: function(data)
-         		// {
-         			// $("#result_column").html(data);
-         		// }
-         // });
-// }

@@ -143,6 +143,7 @@ font-family: Helvetica,Arial,sans-serif;
 font-family: Helvetica,Arial,sans-serif;
 color: #3b2525;
 font-weight: bold;
+margin-bottom: 15px;
 }
 
 #search_filter_wrapper a:hover, a:focus {
@@ -154,7 +155,7 @@ a, a:hover{
 }
 
 #search_filter_control{
-	padding: 15px;
+	padding: 10px;
 }
 #search_checkbox_any{
 	margin-bottom: 10px;
@@ -392,3 +393,9 @@ background-color: #fff;
 	height: 300px;
 }
 
+.btn_export{
+	width: 111px;
+}
+.block_export{
+	margin-top: 20px;
+}
