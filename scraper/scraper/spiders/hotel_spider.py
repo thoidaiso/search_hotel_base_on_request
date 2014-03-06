@@ -121,14 +121,16 @@ class HotelSpider(BaseSpider):
         @param address:
         @param area:
         """
-        log.msg("len name ...." + str(len(name)), level=log.INFO)
-        print "\n name===",str(name)
-        if len(name) == len(href) == len(address) == len(area) == len(currency) == len(star_rating) == len(
-                users_rating) == len(lowest_price):
+        log.msg("prepare to create ...." + str(len(name))+ "add::"+ str(len(address))+ "area::"+ str(len(area))
+                + "currency::"+ str(len(currency))+ "star_rating::"+ str(len(star_rating))+ "users_rating::"+ str(len(users_rating))
+                + "lowest_price::"+ str(len(lowest_price)), level=log.INFO)
+        
+        if len(name) == len(href) == len(address) == len(area) == len(currency) == len(star_rating) == len(users_rating) == len(lowest_price):
+            print "\n name===",str(name)
             for pos in range(0, len(name)):
                 log.msg("name ...." + name[pos], level=log.INFO)
                 obj, created = Hotel_Domain.objects.get_or_create(name=spider_name, priority=priority)
-                obj, created = Hotel.objects.get_or_create(hotel_domain=obj,
+                obj, hotel_created = Hotel.objects.get_or_create(hotel_domain=obj,
                                                            src=href[pos],
                                                            name=name[pos].strip(),
                                                            location=location_obj,
@@ -139,6 +141,8 @@ class HotelSpider(BaseSpider):
                                                                      'lowest_price': lowest_price[pos],
                                                                      'currency': currency[pos],
                                                            })
+                if hotel_created:
+                    log.msg("created hotel " + name[pos], level=log.INFO)
 
     def update_hotel(self, hotel_name, description, service):
         """

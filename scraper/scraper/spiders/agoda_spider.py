@@ -27,10 +27,10 @@ class AgodaSpider(HotelSpider):
     allowed_domains = ["agoda.com"]
     start_urls = [
         "http://www.agoda.com/city/ho-chi-minh-city-vn.html",
-        "http://www.agoda.com/city/phan-thiet-vn.html",
-        "http://www.agoda.com/city/tokyo-jp.html",
-        "http://www.agoda.com/city/singapore-sg.html",
-        "http://www.agoda.com/city/bangkok-th.html",    
+#        "http://www.agoda.com/city/phan-thiet-vn.html",
+#        "http://www.agoda.com/city/tokyo-jp.html",
+#        "http://www.agoda.com/city/singapore-sg.html",
+#        "http://www.agoda.com/city/bangkok-th.html",    
     ]
 
     def parse(self, response):
